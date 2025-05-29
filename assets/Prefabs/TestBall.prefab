@@ -79,8 +79,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 50,
-      "height": 50
+      "width": 75,
+      "height": 75
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -111,8 +111,8 @@
     "_color": {
       "__type__": "cc.Color",
       "r": 255,
-      "g": 255,
-      "b": 255,
+      "g": 0,
+      "b": 0,
       "a": 255
     },
     "_spriteFrame": {
@@ -195,12 +195,12 @@
       "x": 0,
       "y": 0
     },
-    "_radius": 25,
+    "_radius": 37.5,
     "_id": ""
   },
   {
     "__type__": "cc.CompPrefabInfo",
-    "fileId": "86bij67J5J15Pbjb+MTnp/"
+    "fileId": "9dntizrRFFK4DCUvfiRBk2"
   },
   {
     "__type__": "cc.PrefabInfo",
