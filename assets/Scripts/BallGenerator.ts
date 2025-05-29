@@ -6,8 +6,8 @@ export class BallGenerator extends Component {
     private generatePositionX: number = 0; 
     private generatePositionY: number = 0;
 
-    @property({type: Prefab})
-    ballPrefab: Prefab | null = null;
+    @property({type: [Prefab], tooltip: "球的预制体数组"})
+    ballPrefabs: Prefab[] = [];
     private ballToDrop: Node | null = null;
 
     protected onLoad(): void {
@@ -50,7 +50,8 @@ export class BallGenerator extends Component {
     }
 
     generateBall(x:number, y:number): Node {
-        const ball = instantiate(this.ballPrefab);
+        const randomIndex = Math.floor(Math.random() * this.ballPrefabs.length);
+        const ball = instantiate(this.ballPrefabs[randomIndex]);
         const rigidBody:RigidBody2D = ball.getComponent(RigidBody2D);
         rigidBody.gravityScale = 0;
         ball.setParent(this.node.parent);
