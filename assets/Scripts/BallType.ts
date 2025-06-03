@@ -1,5 +1,9 @@
 export enum BallType {
-    SMALL = 0,
-    MEDIUM = 1,
-    LARGE = 2
+    RED = 0,
+    ORINGE = 1,
+    YELLOW = 2,
+    GREEN = 3,
+    CYAN = 4,
+    BLUE = 5,
+    PURPLE
 };
