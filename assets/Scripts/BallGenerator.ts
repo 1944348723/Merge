@@ -1,6 +1,7 @@
-import { _decorator, Component, Node, EventTouch, Input, input, instantiate, view, Prefab, RigidBody2D, Vec2 } from 'cc';
+import { _decorator, Component, Node, EventTouch, Input, input, instantiate, view, Prefab, RigidBody2D, Vec2, director } from 'cc';
 import { BallType } from './BallType';
 import { BallManager } from './BallManager';
+import { EventType } from './EventTyp';
 const { ccclass, property } = _decorator;
 
 @ccclass('BallGenerator')
@@ -15,11 +16,13 @@ export class BallGenerator extends Component {
     protected onLoad(): void {
         input.on(Input.EventType.TOUCH_MOVE, this.onTouchMove, this);
         input.on(Input.EventType.TOUCH_END, this.onTouchEnd, this);
+        director.on(EventType.MERGE_COMPLETE, this.onMergeComplete, this);
     }
 
     protected onDestroy(): void {
         input.off(Input.EventType.TOUCH_MOVE, this.onTouchMove, this);
         input.off(Input.EventType.TOUCH_END, this.onTouchEnd, this);
+        director.off(EventType.MERGE_COMPLETE, this.onMergeComplete, this);
     }
 
     protected start(): void {
@@ -37,12 +40,19 @@ export class BallGenerator extends Component {
     }
 
     onTouchEnd() {
+        if (!this.ballToDrop) {
+            return;
+        }
         // 让当前预览的球掉落
         this.dropBall(this.ballToDrop);
         this.ballToDrop = null;
         this.scheduleOnce(() => {
             this.ballToDrop = this.generateRandomBall(this.generatePositionX, this.generatePositionY);
         }, 1)
+    }
+
+    onMergeComplete(x: number, y: number, type: BallType) {
+        this.generateBall(x, y, type + 1);
     }
 
     private generateRandomBall(x:number, y:number) {
