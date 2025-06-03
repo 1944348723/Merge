@@ -1,7 +1,8 @@
-import { _decorator, assert, CircleCollider2D, Collider2D, Component, Contact2DType, IPhysics2DContact, Node, RigidBody2D, Vec2 } from 'cc';
+import { _decorator, assert, CircleCollider2D, Collider2D, Component, Contact2DType, director, IPhysics2DContact, Node, RigidBody2D, Vec2 } from 'cc';
 import { BallType } from './BallType';
 import { calculateDirection } from '../Utils';
 import { BallGenerator } from './BallGenerator';
+import { EventType } from './EventTyp';
 const { ccclass, property } = _decorator;
 
 @ccclass('BallManager')
@@ -9,7 +10,8 @@ export class BallManager extends Component {
     private type: BallType = null;
     private mergingTarget: Node = null;
     private mergedBy: Node = null;
-    private readonly MERGE_SPEED: number = 10;
+    private readonly MERGE_SPEED: number = 30;
+    private readonly MERGE_DISTASNCE: number = 20;
 
     protected start(): void {
         const collider = this.getComponent(Collider2D);
@@ -32,12 +34,13 @@ export class BallManager extends Component {
     protected update(dt: number): void {
         if (this.mergingTarget) {
             const distance = this.node.getPosition().subtract(this.mergingTarget.getPosition()).length();
-            if (distance < 10) {
+            if (distance < this.MERGE_DISTASNCE) {
                 this.node.destroy();
+                director.emit(EventType.MERGE_COMPLETE, this.node.worldPositionX, this.node.worldPositionY, this.type);
             }
         } else if (this.mergedBy) {
             const distance = this.node.getPosition().subtract(this.mergedBy.getPosition()).length();
-            if (distance < 10) {
+            if (distance < this.MERGE_DISTASNCE) {
                 this.node.destroy();
             }
         }
@@ -91,7 +94,7 @@ export class BallManager extends Component {
             otherRigidBody.gravityScale = 0;
             otherRigidBody.angularVelocity = 0;
             const directionVec = calculateDirection(otherBall.getPosition(), this.node.getPosition()).toVec2();
-            otherRigidBody.linearVelocity = directionVec.multiplyScalar(this.mergeSpeed);
+            otherRigidBody.linearVelocity = directionVec.multiplyScalar(this.MERGE_SPEED);
         }, 0)
     }
 
