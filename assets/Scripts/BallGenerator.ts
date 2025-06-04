@@ -1,7 +1,7 @@
 import { _decorator, Component, Node, EventTouch, Input, input, instantiate, view, Prefab, RigidBody2D, Vec2, director, UITransform } from 'cc';
 import { BallType } from './BallType';
 import { BallManager } from './BallManager';
-import { EventType } from './EventTyp';
+import { EventType } from './EventType';
 const { ccclass, property } = _decorator;
 
 @ccclass('BallGenerator')
