@@ -1,7 +1,6 @@
-import { _decorator, assert, CircleCollider2D, Collider2D, Component, Contact2DType, director, IPhysics2DContact, Node, RigidBody2D, Vec2 } from 'cc';
+import { _decorator, CircleCollider2D, Collider2D, Component, Contact2DType, director, IPhysics2DContact, Node, RigidBody2D, Vec2 } from 'cc';
 import { BallType } from './BallType';
 import { calculateDirection } from '../Utils';
-import { BallGenerator } from './BallGenerator';
 import { EventType } from './EventTyp';
 const { ccclass, property } = _decorator;
 
@@ -10,7 +9,7 @@ export class BallManager extends Component {
     private type: BallType = null;
     private mergingTarget: Node = null;
     private mergedBy: Node = null;
-    private readonly MERGE_SPEED: number = 30;
+    private readonly MERGE_SPEED: number = 100;
     private readonly MERGE_DISTASNCE: number = 20;
 
     protected start(): void {
@@ -53,25 +52,16 @@ export class BallManager extends Component {
 
         // 优先判断y坐标，下面的merge上面的
         if (selfCollider.node.y < otherCollider.node.y) {
-            this.mergingTarget = otherCollider.node;
             this.merge(otherCollider.node);
-            return;
-        } else if (selfCollider.node.y > otherCollider.node.y) {
-            this.mergedBy = otherCollider.node;
-            return;
-        }
+        } else if (selfCollider.node.y === otherCollider.node.y) {
+            // y坐标相同判断速度，速度慢的merge速度快的
+            const otherBallManager = otherCollider.getComponent(BallManager);
+            const selfVelocity = this.getLinearVelocityScalar();
+            const otherVelocity = otherBallManager.getLinearVelocityScalar();
 
-        assert(selfCollider.node.y === otherCollider.node.y);
-        // y坐标相同判断速度，速度慢的merge速度快的
-        const otherBallManager = otherCollider.getComponent(BallManager);
-        const selfVelocity = this.getLinearVelocityScalar();
-        const otherVelocity = otherBallManager.getLinearVelocityScalar();
-
-        if (selfVelocity < otherVelocity) {
-            this.mergingTarget = otherCollider.node;
-            this.merge(otherCollider.node);
-        } else if (selfVelocity > otherVelocity) {
-            this.mergedBy = otherCollider.node;
+            if (selfVelocity < otherVelocity) {
+                this.merge(otherCollider.node);
+            }
         }
     }
 
@@ -87,15 +77,24 @@ export class BallManager extends Component {
         // 被merge的球关闭物理碰撞
         // 被merge的球向当前球移动，需要关闭重力，然后提供一个初速度
         // 接近重合时两个球都销毁，在merge的球的位置生成合并后的球
-        const otherRigidBody = otherBall.getComponent(RigidBody2D);
-        const otherCollider = otherBall.getComponent(CircleCollider2D);
-        otherCollider.enabled = false;
+        this.mergingTarget = otherBall;
+        otherBall.getComponent(BallManager)?.mergeTo(this.node);
+    }
+
+    mergeTo(otherBall: Node) {
+        this.mergedBy = otherBall;
+
+        const collider = this.getComponent(CircleCollider2D);
+        collider.enabled = false;
+
+        // 延迟一下再设置，否则会被弹开，设置的速度会被碰撞覆盖
         this.scheduleOnce(() => {
-            otherRigidBody.gravityScale = 0;
-            otherRigidBody.angularVelocity = 0;
-            const directionVec = calculateDirection(otherBall.getPosition(), this.node.getPosition()).toVec2();
-            otherRigidBody.linearVelocity = directionVec.multiplyScalar(this.MERGE_SPEED);
-        }, 0)
+            const rigidBody = this.getComponent(RigidBody2D);
+            rigidBody.gravityScale = 0;
+            rigidBody.angularVelocity = 0;
+            const directionVec = calculateDirection(this.node.getPosition(), otherBall.getPosition()).toVec2();
+            rigidBody.linearVelocity = directionVec.multiplyScalar(this.MERGE_SPEED);
+        }, 0);
     }
 
     getLinearVelocityScalar(): number {
@@ -105,6 +104,16 @@ export class BallManager extends Component {
         }
 
         return Math.sqrt(v.x * v.x + v.y * v.y);
+    }
+    
+    drop() {
+        const rigidBody: RigidBody2D = this.getComponent(RigidBody2D);
+        if (rigidBody) {
+            rigidBody.gravityScale = 2;
+            const downwardImpulse = new Vec2(0, -0.1);
+            let rigidBodyCenter = rigidBody.getWorldCenter(new Vec2());
+            rigidBody.applyLinearImpulse(downwardImpulse, rigidBodyCenter, true);
+        }
     }
 }
 
