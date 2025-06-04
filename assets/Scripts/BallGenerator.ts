@@ -77,7 +77,7 @@ export class BallGenerator extends Component {
     private dropBall(ball: Node) {
         const rigidBody: RigidBody2D = ball?.getComponent(RigidBody2D);
         if (rigidBody) {
-            rigidBody.gravityScale = 1;
+            rigidBody.gravityScale = 2;
             const downwardImpulse = new Vec2(0, -0.1);
             let rigidBodyCenter = rigidBody.getWorldCenter(new Vec2());
             rigidBody.applyLinearImpulse(downwardImpulse, rigidBodyCenter, true);
