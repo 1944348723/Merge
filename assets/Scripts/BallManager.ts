@@ -1,7 +1,7 @@
 import { _decorator, CircleCollider2D, Collider2D, Component, Contact2DType, director, IPhysics2DContact, Node, RigidBody2D, Vec2 } from 'cc';
 import { BallType } from './BallType';
 import { calculateDirection } from '../Utils';
-import { EventType } from './EventTyp';
+import { EventType } from './EventType';
 const { ccclass, property } = _decorator;
 
 @ccclass('BallManager')
@@ -9,7 +9,7 @@ export class BallManager extends Component {
     private type: BallType = null;
     private mergingTarget: Node = null;
     private mergedBy: Node = null;
-    private readonly MERGE_SPEED: number = 100;
+    private readonly MERGE_SPEED: number = 80;
     private readonly MERGE_DISTASNCE: number = 20;
 
     protected start(): void {
@@ -47,6 +47,9 @@ export class BallManager extends Component {
 
     onBeginContact(selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null) {
         if (!this.isSameTypeOfBall(selfCollider.node, otherCollider.node)) {
+            return;
+        }
+        if (this.mergingTarget || this.mergedBy) {
             return;
         }
 
