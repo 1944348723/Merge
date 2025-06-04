@@ -59,7 +59,8 @@ export class BallGenerator extends Component {
     }
 
     onMergeComplete(x: number, y: number, type: BallType) {
-        this.generateBall(x, y, type + 1);
+        const newBall = this.generateBall(x, y, type + 1);
+        this.dropBall(newBall);
     }
 
     private generateRandomBall(x:number, y:number) {
