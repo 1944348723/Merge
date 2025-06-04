@@ -51,7 +51,7 @@ export class BallGenerator extends Component {
             return;
         }
         // 让当前预览的球掉落
-        this.dropBall(this.ballToDrop);
+        this.ballToDrop.getComponent(BallManager)?.drop();
         this.ballToDrop = null;
         this.scheduleOnce(() => {
             this.ballToDrop = this.generateRandomBall(this.generatePositionX, this.generatePositionY);
@@ -60,7 +60,7 @@ export class BallGenerator extends Component {
 
     onMergeComplete(x: number, y: number, type: BallType) {
         const newBall = this.generateBall(x, y, type + 1);
-        this.dropBall(newBall);
+        newBall.getComponent(BallManager)?.drop();
     }
 
     private generateRandomBall(x:number, y:number) {
@@ -80,16 +80,6 @@ export class BallGenerator extends Component {
         rigidBody.gravityScale = 0;
 
         return ball;
-    }
-
-    private dropBall(ball: Node) {
-        const rigidBody: RigidBody2D = ball?.getComponent(RigidBody2D);
-        if (rigidBody) {
-            rigidBody.gravityScale = 2;
-            const downwardImpulse = new Vec2(0, -0.1);
-            let rigidBodyCenter = rigidBody.getWorldCenter(new Vec2());
-            rigidBody.applyLinearImpulse(downwardImpulse, rigidBodyCenter, true);
-        }
     }
 }
 
