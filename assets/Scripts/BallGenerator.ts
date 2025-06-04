@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, EventTouch, Input, input, instantiate, view, Prefab, RigidBody2D, Vec2, director } from 'cc';
+import { _decorator, Component, Node, EventTouch, Input, input, instantiate, view, Prefab, RigidBody2D, Vec2, director, UITransform } from 'cc';
 import { BallType } from './BallType';
 import { BallManager } from './BallManager';
 import { EventType } from './EventTyp';
@@ -35,8 +35,15 @@ export class BallGenerator extends Component {
         if (!this.ballToDrop) {
             return;
         }
-        //TODO: 快速移动时会穿出屏幕
-        this.ballToDrop.worldPositionX += event.getDeltaX();
+        //TODO: 将硬编码切换为获取数据
+        const halfBallWidth = this.ballToDrop.getComponent(UITransform).width / 2;
+        const leftBound = halfBallWidth;
+        const rightBound = 720 - halfBallWidth;
+        let newX = this.ballToDrop.worldPositionX + event.getDeltaX();
+        if (newX < leftBound) newX = leftBound;
+        if (newX > rightBound) newX = rightBound;
+
+        this.ballToDrop.worldPositionX = newX;
     }
 
     onTouchEnd() {
