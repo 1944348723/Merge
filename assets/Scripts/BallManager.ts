@@ -35,7 +35,7 @@ export class BallManager extends Component {
             const distance = this.node.getPosition().subtract(this.mergingTarget.getPosition()).length();
             if (distance < this.MERGE_DISTASNCE) {
                 this.node.destroy();
-                director.emit(EventType.MERGE_COMPLETE, this.node.worldPositionX, this.node.worldPositionY, this.type);
+                director.emit(EventType.BALL_MERGED, this.node.worldPositionX, this.node.worldPositionY, this.type);
             }
         } else if (this.mergedBy) {
             const distance = this.node.getPosition().subtract(this.mergedBy.getPosition()).length();
