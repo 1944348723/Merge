@@ -1,3 +1,4 @@
 export enum EventType {
-    MERGE_COMPLETE
+    BALL_MERGED,
+    PLAYER_DROPPED_BALL
 };
