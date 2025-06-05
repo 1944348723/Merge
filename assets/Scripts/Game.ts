@@ -4,6 +4,7 @@ import { BallGenerator } from './BallGenerator';
 import { Controller } from './Controller';
 import { BallType } from './BallType';
 import { BallManager } from './BallManager';
+import { BallConfig } from './BallConfig';
 const { ccclass, property } = _decorator;
 
 @ccclass('Game')
@@ -16,12 +17,13 @@ export class Game extends Component {
 
     private generatePositionX: number = 0; 
     private generatePositionY: number = 0;
+    
+    private score: number = 0;
 
     protected start(): void {
         const uitransform = this.getComponent(UITransform);
         if (uitransform) {
             this.controller?.setBounds(0, uitransform.width);
-            console.log(this.controller);
         }
 
         this.generatePositionX = this.node.worldPositionX
@@ -48,6 +50,9 @@ export class Game extends Component {
     }
 
     onBallMerged(x: number, y: number, type: BallType) {
+        this.score += BallConfig.getScore(type);
+        director.emit(EventType.SCORE_CHANGED, this.score);
+        
         const newBall = this.ballGenerator.generateBall(x, y, type + 1);
         newBall.getComponent(BallManager)?.drop();
     }
