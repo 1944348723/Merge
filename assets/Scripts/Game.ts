@@ -1,4 +1,4 @@
-import { _decorator, Component, director, Node, UITransform, view } from 'cc';
+import { _decorator, Component, director, UITransform, view, Node} from 'cc';
 import { EventType } from './EventType';
 import { BallGenerator } from './BallGenerator';
 import { Controller } from './Controller';
@@ -33,13 +33,25 @@ export class Game extends Component {
     }
 
     protected onLoad(): void {
+        director.on(EventType.SETTINGS_PANEL_OPENED, this.onSettingsPanelOpened, this);
+        director.on(EventType.SETTINGS_PANEL_CLOSED, this.onSettingsPanelClosed, this);
         director.on(EventType.PLAYER_DROPPED_BALL, this.onPlayerDroppedBall, this);
         director.on(EventType.BALL_MERGED, this.onBallMerged, this);
     }
 
     protected onDestroy(): void {
+        director.off(EventType.SETTINGS_PANEL_OPENED, this.onSettingsPanelOpened, this);
+        director.off(EventType.SETTINGS_PANEL_CLOSED, this.onSettingsPanelClosed, this);
         director.off(EventType.PLAYER_DROPPED_BALL, this.onPlayerDroppedBall, this);
         director.off(EventType.BALL_MERGED, this.onBallMerged, this);
+    }
+
+    onSettingsPanelOpened() {
+        this.controller.enabled = false;
+    }
+
+    onSettingsPanelClosed() {
+        this.controller.enabled = true;
     }
 
     onPlayerDroppedBall() {
