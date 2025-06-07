@@ -26,7 +26,6 @@ export class ScoreLabel extends Component {
         console.log(`score changed: ${score}`);
         if (this.label) {
             this.label.string = `分数：${score}`;
-            console.log("label string changed");
         }
     }
 }
