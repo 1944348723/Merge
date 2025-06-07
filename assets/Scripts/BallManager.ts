@@ -10,7 +10,7 @@ export class BallManager extends Component {
     private mergingTarget: Node = null;
     private mergedBy: Node = null;
     private readonly MERGE_SPEED: number = 80;
-    private readonly MERGE_DISTASNCE: number = 20;
+    private readonly MERGE_DISTASNCE: number = 30;
 
     protected start(): void {
         const collider = this.getComponent(Collider2D);
@@ -76,6 +76,7 @@ export class BallManager extends Component {
         return ball1 && ball2 && ball1.type === ball2.type;
     }
 
+    // TODO:当前合并方式有风险，当碰撞后负责merge的球A的速度非常快时，被merge球B朝A原来的位置移动，可能会出现无法靠近到合并距离的情况
     merge(otherBall: Node) {
         // 被merge的球关闭物理碰撞
         // 被merge的球向当前球移动，需要关闭重力，然后提供一个初速度
