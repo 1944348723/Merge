@@ -9,12 +9,12 @@ export class Controller extends Component {
     private leftBound: number = null;
     private rightBound: number = null;
 
-    protected onLoad(): void {
+    protected onEnable(): void {
         input.on(Input.EventType.TOUCH_MOVE, this.onTouchMove, this);
         input.on(Input.EventType.TOUCH_END, this.onTouchEnd, this);
     }
 
-    protected onDestroy(): void {
+    protected onDisable(): void {
         input.off(Input.EventType.TOUCH_MOVE, this.onTouchMove, this);
         input.off(Input.EventType.TOUCH_END, this.onTouchEnd, this);
     }
