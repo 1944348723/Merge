@@ -5,5 +5,6 @@ export enum BallType {
     GREEN = 3,
     CYAN = 4,
     BLUE = 5,
-    PURPLE
+    PURPLE = 6,
+    NULL
 };
