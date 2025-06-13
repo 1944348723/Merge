@@ -1,6 +1,7 @@
 import { _decorator, Component, Node, instantiate, Prefab, RigidBody2D } from 'cc';
 import { BallType } from './BallType';
 import { BallManager } from './BallManager';
+import { DataManager } from './DataManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('BallGenerator')
@@ -10,7 +11,9 @@ export class BallGenerator extends Component {
 
     public generateRandomBall(x:number, y:number) {
         const type:BallType = Math.floor(Math.random() * this.ballPrefabs.length);
-        return this.generateBall(x, y, type);
+        const ball = this.generateBall(x, y, type);
+        DataManager.instance.addBall(ball);
+        return ball;
     }
 
     public generateBall(x:number, y:number, type: BallType): Node {
@@ -24,6 +27,7 @@ export class BallGenerator extends Component {
         const rigidBody:RigidBody2D = ball.getComponent(RigidBody2D);
         rigidBody.gravityScale = 0;
 
+        DataManager.instance.addBall(ball);
         return ball;
     }
 }
