@@ -1,4 +1,5 @@
 export enum EventType {
+    BALL_FIRST_COLLISION,
     BALL_MERGED,
     PLAYER_DROPPED_BALL,
     SCORE_CHANGED,
