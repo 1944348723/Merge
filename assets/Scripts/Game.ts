@@ -5,6 +5,7 @@ import { Controller } from './Controller';
 import { BallType } from './BallType';
 import { BallManager } from './BallManager';
 import { BallConfig } from './BallConfig';
+import { DataManager } from './DataManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('Game')
@@ -15,8 +16,8 @@ export class Game extends Component {
     @property(Controller)
     controller: Controller | null = null;
 
-    private generatePositionX: number = 0; 
-    private generatePositionY: number = 0;
+    private defaultBallX: number = 0; 
+    private defaultBallY: number = 0;
     
     private score: number = 0;
 
@@ -26,9 +27,11 @@ export class Game extends Component {
             this.controller?.setBounds(0, uitransform.width);
         }
 
-        this.generatePositionX = this.node.worldPositionX
-        this.generatePositionY = this.node.worldPositionY + view.getVisibleSize().height * 3 / 8;
-        const ball = this.ballGenerator.generateRandomBall(this.generatePositionX, this.generatePositionY);
+        this.defaultBallX = this.node.worldPositionX
+        this.defaultBallY = this.node.worldPositionY + view.getVisibleSize().height * 3 / 8;
+        DataManager.instance.setDefaultBallY(this.defaultBallY);
+
+        const ball = this.ballGenerator.generateRandomBall(this.defaultBallX, this.defaultBallY);
         this.controller.currentBall = ball;
     }
 
@@ -56,7 +59,7 @@ export class Game extends Component {
 
     onPlayerDroppedBall() {
         this.scheduleOnce(() => {
-            const ball = this.ballGenerator.generateRandomBall(this.generatePositionX, this.generatePositionY);
+            const ball = this.ballGenerator.generateRandomBall(this.defaultBallX, this.defaultBallY);
             this.controller.currentBall = ball;
         }, 1);
     }
