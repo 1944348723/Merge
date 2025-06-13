@@ -2,6 +2,7 @@ import { _decorator, CircleCollider2D, Collider2D, Component, Contact2DType, dir
 import { BallType } from './BallType';
 import { calculateDirection } from '../Utils';
 import { EventType } from './EventType';
+import { DataManager } from './DataManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('BallManager')
@@ -11,6 +12,7 @@ export class BallManager extends Component {
     private mergedBy: Node = null;
     private readonly MERGE_SPEED: number = 80;
     private readonly MERGE_DISTASNCE: number = 30;
+    private _hasCollided = false;
 
     protected start(): void {
         const collider = this.getComponent(Collider2D);
@@ -35,17 +37,24 @@ export class BallManager extends Component {
             const distance = this.node.getPosition().subtract(this.mergingTarget.getPosition()).length();
             if (distance < this.MERGE_DISTASNCE) {
                 this.node.destroy();
+                DataManager.instance.deleteBall(this.node);
                 director.emit(EventType.BALL_MERGED, this.node.worldPositionX, this.node.worldPositionY, this.type);
             }
         } else if (this.mergedBy) {
             const distance = this.node.getPosition().subtract(this.mergedBy.getPosition()).length();
             if (distance < this.MERGE_DISTASNCE) {
                 this.node.destroy();
+                DataManager.instance.deleteBall(this.node);
             }
         }
     }
 
     onBeginContact(selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null) {
+        if (!this.hasCollided && selfCollider.node.worldPositionY !== DataManager.instance.getDefaultBallY()) {
+            this._hasCollided = true;
+            director.emit(EventType.BALL_FIRST_COLLISION, selfCollider.node);
+        }
+
         if (!this.isSameTypeOfBall(selfCollider.node, otherCollider.node)) {
             return;
         }
@@ -66,6 +75,10 @@ export class BallManager extends Component {
                 this.merge(otherCollider.node);
             }
         }
+    }
+
+    get hasCollided() {
+        return this._hasCollided;
     }
 
     // 传入的不是球会返回false
