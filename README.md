@@ -21,6 +21,7 @@
 * 缺点：如果按钮行为非常简单，单开脚本就显得有冗余
 
 ## 事件系统
+### 作用
 事件系统可以提高代码内聚性、降低耦合性、降低维护成本
 代码中经常会碰到A中某处需要调用B的函数的情况，并且这种情况是发生了某个事件这种能清晰表达的，不是单纯的调用，而是A和B的业务关系。比如点击某个按钮时进入下一关，可能需要加载下一关的地图、更新UI、背景音乐切换等。
 一种可能的实现是，Player的die()函数中调用各个模块的函数，比如
@@ -111,3 +112,92 @@ AudioManager --> EventManager
 但是这样不是还依赖于`EventManager`吗，我换个项目没有`EventManager`了呢。
 
 但实际上，引擎就已经实现了事件系统，如果都使用引擎提供的事件系统那就完全可复用，引擎的事件系统其实就相当于事件交互的标准。就好像不同的信号发射和接收设备使用同一频率，或电源的插头和插座使用相同的标准规格。
+
+### 组织方法
+Cocos有两种事件，一个是`director`提供的全局事件，一个是`node`提供的节点事件。
+
+一般节点事件用于局部通信，比如兄弟节点间、父子节点间等，而全局事件用于跨系统、跨模块甚至全局广播的情况
+
+**1.子节点通知父节点**
+**子节点在父节点上emit，父节点监听**
+```typescript
+export class Child extends Component {
+    onLoad() {
+        this.node.on(Input.EventType.TOUCH_END, onClicked, this);
+    }
+    onDestroy() {
+        this.node.off(Input.EventType.TOUCH_END, onClicked, this);
+    }
+    onClicked() {
+        this.node.parent.emit('child-clicked');
+    }
+}
+
+export class Parent extends Component {
+    onLoad() {
+        this.node.on("child-clicked", onChildClicked, this);
+    }
+    onDestroy() {
+        this.node.off("child-clicked", onChildClicked, this);
+    }
+    onChildClicked() {
+        console.log("child-clicked');
+    }
+}
+```
+**事件冒泡**
+```typescript
+export class Child extends Component {
+    onLoad() {
+        this.node.on(Input.EventType.TOUCH_END, onClicked, this);
+    }
+    onDestroy() {
+        this.node.off(Input.EventType.TOUCH_END, onClicked, this);
+    }
+
+    onClicked() {
+        const event = new Event.EventCustom('child-clicked', true); // true 表示冒泡
+        this.node.dispatchEvent(event);
+    }
+}
+
+export class Parent extends Component {
+    onLoad() {
+        this.node.on('child-bubble', this.onChildClicked, this);
+    }
+    onDestroy() {
+        this.node.off('child-bubble', this.onChildClicked, this);
+    }
+    onChildBubble(event) {
+        console.log('child-clicked');
+    }
+}
+```
+
+**兄弟节点间**
+可以通过都在父节点上派发和监听事件实现
+```typescript
+class A extends Component {
+    onLoad() {
+        this.node.on(Input.EventType.TOUCH_END, onClicked, this);
+    }
+    onDestroy() {
+        this.node.off(Input.EventType.TOUCH_END, onClicked, this);
+    }
+    onClicked() {
+        this.node.parent.emit('A-clicked');
+    }
+}
+
+class B extends Component {
+    onLoad() {
+        this.node.parent.on('A-clicked', onAClicked, this);
+    }
+    onDestroy() {
+        this.node.parent.off('A-clicked', onAClicked, this);
+    }
+    onAClicked() {
+        console.log("A-clicked");
+    }
+}
+```
