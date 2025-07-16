@@ -1,6 +1,6 @@
 import { _decorator, Component, director, EventTouch, Input, input, Node, UITransform } from 'cc';
 import { BallManager } from './BallManager';
-import { EventType } from './EventType';
+import { EventType } from '../Data/EventType';
 const { ccclass, property } = _decorator;
 
 @ccclass('Controller')

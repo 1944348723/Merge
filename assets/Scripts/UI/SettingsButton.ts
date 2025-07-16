@@ -1,5 +1,5 @@
 import { _decorator, Component, Input, Node } from 'cc';
-import { EventType } from './EventType';
+import { EventType } from '../Data/EventType';
 const { ccclass, property } = _decorator;
 
 @ccclass('SettingsButton')

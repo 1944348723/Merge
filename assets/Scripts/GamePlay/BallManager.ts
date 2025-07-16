@@ -1,8 +1,8 @@
 import { _decorator, CircleCollider2D, Collider2D, Component, Contact2DType, director, IPhysics2DContact, Node, RigidBody2D, Vec2 } from 'cc';
-import { BallType } from './BallType';
-import { calculateDirection } from '../Utils';
-import { EventType } from './EventType';
-import { DataManager } from './DataManager';
+import { BallType } from '../Data/BallType';
+import { calculateDirection } from '../../Utils';
+import { EventType } from '../Data/EventType';
+import { DataManager } from '../Data/DataManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('BallManager')

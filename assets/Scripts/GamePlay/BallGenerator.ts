@@ -1,7 +1,7 @@
 import { _decorator, Component, Node, instantiate, Prefab, RigidBody2D } from 'cc';
-import { BallType } from './BallType';
+import { BallType } from '../Data/BallType';
 import { BallManager } from './BallManager';
-import { DataManager } from './DataManager';
+import { DataManager } from '../Data/DataManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('BallGenerator')
@@ -21,15 +21,15 @@ export class BallGenerator extends Component {
         ball.getComponent(BallManager).init(type);
         ball.setParent(this.node.parent);
 
+        const rigidBody:RigidBody2D = ball.getComponent(RigidBody2D);
+        rigidBody.gravityScale = 0;
+
         ball.worldPositionX = x;
         ball.worldPositionY = y;
 
-        const rigidBody:RigidBody2D = ball.getComponent(RigidBody2D);
-        rigidBody.gravityScale = 0;
 
         DataManager.instance.addBall(ball);
         return ball;
     }
 }
-
 

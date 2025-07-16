@@ -1,11 +1,11 @@
 import { _decorator, Component, director, UITransform, view, Node} from 'cc';
-import { EventType } from './EventType';
+import { EventType } from '../Data/EventType';
 import { BallGenerator } from './BallGenerator';
 import { Controller } from './Controller';
-import { BallType } from './BallType';
+import { BallType } from '../Data/BallType';
 import { BallManager } from './BallManager';
-import { BallConfig } from './BallConfig';
-import { DataManager } from './DataManager';
+import { BallConfig } from '../Data/BallConfig';
+import { DataManager } from '../Data/DataManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('Game')
@@ -21,17 +21,21 @@ export class Game extends Component {
     
     private score: number = 0;
 
+    // 初始化游戏
     protected start(): void {
-        const uitransform = this.getComponent(UITransform);
-        if (uitransform) {
-            this.controller?.setBounds(0, uitransform.width);
-        }
-
+        // 设置默认球的位置
         this.defaultBallX = this.node.worldPositionX
         this.defaultBallY = this.node.worldPositionY + view.getVisibleSize().height * 3 / 8;
         DataManager.instance.setDefaultBallY(this.defaultBallY);
 
+        // 生成第一个球
         const ball = this.ballGenerator.generateRandomBall(this.defaultBallX, this.defaultBallY);
+
+        // 初始化控制器
+        const uitransform = this.getComponent(UITransform);
+        if (uitransform) {
+            this.controller?.setBounds(0, uitransform.width);
+        }
         this.controller.currentBall = ball;
     }
 

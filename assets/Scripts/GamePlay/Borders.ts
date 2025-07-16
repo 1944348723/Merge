@@ -1,7 +1,7 @@
 import { _decorator, Component, director, Node, UITransform, view } from 'cc';
-import { DataManager } from './DataManager';
+import { DataManager } from '../Data/DataManager';
 import { BallManager } from './BallManager';
-import { EventType } from './EventType';
+import { EventType } from '../Data/EventType';
 const { ccclass, property } = _decorator;
 
 @ccclass('Borders')

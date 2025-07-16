@@ -1,5 +1,5 @@
 import { _decorator, Component, director, Label, Node } from 'cc';
-import { EventType } from './EventType';
+import { EventType } from '../Data/EventType';
 const { ccclass, property } = _decorator;
 
 @ccclass('ScoreLabel')
