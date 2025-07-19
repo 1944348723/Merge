@@ -9,6 +9,16 @@ export class Controller extends Component {
     private leftBound: number = null;
     private rightBound: number = null;
 
+    protected onLoad(): void {
+        director.on(EventType.GAME_START, this.onGameStart, this);
+        director.on(EventType.GAME_OVER, this.onGameOver, this);
+    }
+
+    protected onDestroy(): void {
+        director.off(EventType.GAME_START, this.onGameStart, this);
+        director.off(EventType.GAME_OVER, this.onGameOver, this);
+    }
+
     protected onEnable(): void {
         input.on(Input.EventType.TOUCH_MOVE, this.onTouchMove, this);
         input.on(Input.EventType.TOUCH_END, this.onTouchEnd, this);
@@ -45,6 +55,14 @@ export class Controller extends Component {
         this.currentBall = null;
 
         director.emit(EventType.PLAYER_DROPPED_BALL);
+    }
+
+    onGameStart() {
+        this.enabled = true;
+    }
+
+    onGameOver() {
+        this.enabled = false;
     }
 
     setBounds(left: number, right: number) {

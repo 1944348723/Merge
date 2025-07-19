@@ -37,6 +37,7 @@ export class Game extends Component {
             this.controller?.setBounds(0, uitransform.width);
         }
         this.controller.currentBall = ball;
+        director.emit(EventType.GAME_START);
     }
 
     protected onLoad(): void {
@@ -44,6 +45,7 @@ export class Game extends Component {
         director.on(EventType.SETTINGS_PANEL_CLOSED, this.onSettingsPanelClosed, this);
         director.on(EventType.PLAYER_DROPPED_BALL, this.onPlayerDroppedBall, this);
         director.on(EventType.BALL_MERGED, this.onBallMerged, this);
+        director.on(EventType.BALL_FIRST_COLLISION, this.onBallFirstCollision, this);
     }
 
     protected onDestroy(): void {
@@ -51,6 +53,7 @@ export class Game extends Component {
         director.off(EventType.SETTINGS_PANEL_CLOSED, this.onSettingsPanelClosed, this);
         director.off(EventType.PLAYER_DROPPED_BALL, this.onPlayerDroppedBall, this);
         director.off(EventType.BALL_MERGED, this.onBallMerged, this);
+        director.off(EventType.BALL_FIRST_COLLISION, this.onBallFirstCollision, this);
     }
 
     onSettingsPanelOpened() {
@@ -70,10 +73,22 @@ export class Game extends Component {
 
     onBallMerged(x: number, y: number, type: BallType) {
         this.score += BallConfig.getScore(type);
+        DataManager.instance.score = this.score;
         director.emit(EventType.SCORE_CHANGED, this.score);
         
         const newBall = this.ballGenerator.generateBall(x, y, type + 1);
         newBall.getComponent(BallManager)?.drop();
+    }
+
+    onBallFirstCollision(ball: Node) {
+        // 检查是否游戏结束
+        this.scheduleOnce(() => {
+            for (ball of DataManager.instance.balls) {
+                if (ball.worldPositionY > DataManager.instance.heightOfGameOverLine) {
+                    director.emit(EventType.GAME_OVER);
+                }
+            }
+        }, 0.5);
     }
 }
 

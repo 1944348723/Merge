@@ -24,6 +24,7 @@ export class Borders extends Component {
 
     start() {
         this.top.active = false;
+        DataManager.instance.heightOfGameOverLine = this.top.worldPositionY;
     }
 
     update(deltaTime: number) {

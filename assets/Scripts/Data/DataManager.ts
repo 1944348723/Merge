@@ -6,6 +6,8 @@ export class DataManager extends Component {
     private static _instance: DataManager | null = null;
     private _balls: Set<Node> = new Set();
     private _defaultBallY = 0;
+    public heightOfGameOverLine = 0;
+    public score = 0;
 
     public static get instance(): DataManager {
         if (!DataManager._instance) {

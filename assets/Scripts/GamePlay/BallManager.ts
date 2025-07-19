@@ -1,4 +1,4 @@
-import { _decorator, CircleCollider2D, Collider2D, Component, Contact2DType, director, IPhysics2DContact, Node, RigidBody2D, Vec2 } from 'cc';
+import { _decorator, BoxCollider2D, CircleCollider2D, Collider2D, Component, Contact2DType, director, IPhysics2DContact, Node, RigidBody2D, Vec2 } from 'cc';
 import { BallType } from '../Data/BallType';
 import { calculateDirection } from '../../Utils';
 import { EventType } from '../Data/EventType';
@@ -52,6 +52,7 @@ export class BallManager extends Component {
     onBeginContact(selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null) {
         if (!this.hasCollided && selfCollider.node.worldPositionY !== DataManager.instance.getDefaultBallY()) {
             this._hasCollided = true;
+            DataManager.instance.addBall(selfCollider.node);
             director.emit(EventType.BALL_FIRST_COLLISION, selfCollider.node);
         }
 
@@ -64,7 +65,7 @@ export class BallManager extends Component {
 
         // 优先判断y坐标，下面的merge上面的
         if (selfCollider.node.y < otherCollider.node.y) {
-            this.merge(otherCollider.node);
+            // this.merge(otherCollider.node);
         } else if (selfCollider.node.y === otherCollider.node.y) {
             // y坐标相同判断速度，速度慢的merge速度快的
             const otherBallManager = otherCollider.getComponent(BallManager);
@@ -72,7 +73,7 @@ export class BallManager extends Component {
             const otherVelocity = otherBallManager.getLinearVelocityScalar();
 
             if (selfVelocity < otherVelocity) {
-                this.merge(otherCollider.node);
+                // this.merge(otherCollider.node);
             }
         }
     }
@@ -125,11 +126,15 @@ export class BallManager extends Component {
     
     drop() {
         const rigidBody: RigidBody2D = this.getComponent(RigidBody2D);
+        const circleCollider: CircleCollider2D = this.getComponent(CircleCollider2D);
         if (rigidBody) {
             rigidBody.gravityScale = 2;
             const downwardImpulse = new Vec2(0, -0.1);
             let rigidBodyCenter = rigidBody.getWorldCenter(new Vec2());
             rigidBody.applyLinearImpulse(downwardImpulse, rigidBodyCenter, true);
+        }
+        if (circleCollider) {
+            circleCollider.enabled = true;
         }
     }
 }
