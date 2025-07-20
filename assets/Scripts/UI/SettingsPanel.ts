@@ -7,17 +7,23 @@ export class SettingsPanel extends Component {
     @property({type: Node})
     closeButton: Node = null;
 
+    @property({type: Node})
+    restartButton: Node = null;
+
     protected onLoad(): void {
         this.node.parent.on(EventType.SETTINGS_BUTTON_CLICKED, this.onSettingsButtonClicked, this);
         this.closeButton?.on(Input.EventType.TOUCH_END, this.onCloseButtonClicked, this);
+        this.restartButton?.on(Input.EventType.TOUCH_END, this.onRestartButtonClicked, this);
     }
 
     protected onDestroy(): void {
         this.node.parent.off(EventType.SETTINGS_BUTTON_CLICKED, this.onSettingsButtonClicked, this);
         this.closeButton?.off(Input.EventType.TOUCH_END, this.onCloseButtonClicked, this);
+        this.restartButton?.off(Input.EventType.TOUCH_END, this.onRestartButtonClicked, this);
     }
 
     onSettingsButtonClicked() {
+        this.node.parent.setSiblingIndex(1000);
         this.node.active = true;
         director.emit(EventType.SETTINGS_PANEL_OPENED);
     }
@@ -25,6 +31,11 @@ export class SettingsPanel extends Component {
     onCloseButtonClicked() {
         this.node.active = false;
         director.emit(EventType.SETTINGS_PANEL_CLOSED);
+    }
+
+    onRestartButtonClicked() {
+        director.emit(EventType.GAME_START);
+        this.node.active = false;
     }
 }
 

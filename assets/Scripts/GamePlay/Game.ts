@@ -18,8 +18,8 @@ export class Game extends Component {
 
     private defaultBallX: number = 0; 
     private defaultBallY: number = 0;
-    
     private score: number = 0;
+    private gameOver: boolean = false;
 
     // 初始化游戏
     protected start(): void {
@@ -27,6 +27,51 @@ export class Game extends Component {
         this.defaultBallX = this.node.worldPositionX
         this.defaultBallY = this.node.worldPositionY + view.getVisibleSize().height * 3 / 8;
         DataManager.instance.setDefaultBallY(this.defaultBallY);
+
+        director.emit(EventType.GAME_START);
+    }
+
+    protected onLoad(): void {
+        director.on(EventType.SETTINGS_PANEL_OPENED, this.onSettingsPanelOpened, this);
+        director.on(EventType.SETTINGS_PANEL_CLOSED, this.onSettingsPanelClosed, this);
+        director.on(EventType.PLAYER_DROPPED_BALL, this.onPlayerDroppedBall, this);
+        director.on(EventType.BALL_MERGED, this.onBallMerged, this);
+        director.on(EventType.GAME_START, this.onGameStart, this);
+        director.on(EventType.GAME_OVER, this.onGameOver, this);
+    }
+
+    protected onDestroy(): void {
+        director.off(EventType.SETTINGS_PANEL_OPENED, this.onSettingsPanelOpened, this);
+        director.off(EventType.SETTINGS_PANEL_CLOSED, this.onSettingsPanelClosed, this);
+        director.off(EventType.PLAYER_DROPPED_BALL, this.onPlayerDroppedBall, this);
+        director.off(EventType.BALL_MERGED, this.onBallMerged, this);
+        director.off(EventType.GAME_START, this.onGameStart, this);
+        director.off(EventType.GAME_OVER, this.onGameOver, this);
+    }
+
+    protected update(dt: number): void {
+        if (!this.gameOver) {
+            this.checkGameOver();
+        }
+    }
+
+    private checkGameOver() {
+        let count: number = 0;
+        for (const ball of DataManager.instance.balls) {
+            const uitransform = ball.getComponent(UITransform);
+            if (uitransform && ball.worldPositionY + uitransform.height / 2 > DataManager.instance.heightOfGameOverLine) {
+                ++count;
+            }
+        }
+        if (count > 3) {
+            director.emit(EventType.GAME_OVER);
+        }
+    }
+
+    onGameStart() {
+        this.gameOver = false;
+        // 清除所有球
+        DataManager.instance.clearBalls();
 
         // 生成第一个球
         const ball = this.ballGenerator.generateRandomBall(this.defaultBallX, this.defaultBallY);
@@ -37,23 +82,10 @@ export class Game extends Component {
             this.controller?.setBounds(0, uitransform.width);
         }
         this.controller.currentBall = ball;
-        director.emit(EventType.GAME_START);
     }
 
-    protected onLoad(): void {
-        director.on(EventType.SETTINGS_PANEL_OPENED, this.onSettingsPanelOpened, this);
-        director.on(EventType.SETTINGS_PANEL_CLOSED, this.onSettingsPanelClosed, this);
-        director.on(EventType.PLAYER_DROPPED_BALL, this.onPlayerDroppedBall, this);
-        director.on(EventType.BALL_MERGED, this.onBallMerged, this);
-        director.on(EventType.BALL_FIRST_COLLISION, this.onBallFirstCollision, this);
-    }
-
-    protected onDestroy(): void {
-        director.off(EventType.SETTINGS_PANEL_OPENED, this.onSettingsPanelOpened, this);
-        director.off(EventType.SETTINGS_PANEL_CLOSED, this.onSettingsPanelClosed, this);
-        director.off(EventType.PLAYER_DROPPED_BALL, this.onPlayerDroppedBall, this);
-        director.off(EventType.BALL_MERGED, this.onBallMerged, this);
-        director.off(EventType.BALL_FIRST_COLLISION, this.onBallFirstCollision, this);
+    onGameOver() {
+        this.gameOver = true;
     }
 
     onSettingsPanelOpened() {
@@ -80,16 +112,6 @@ export class Game extends Component {
         newBall.getComponent(BallManager)?.drop();
     }
 
-    onBallFirstCollision(ball: Node) {
-        // 检查是否游戏结束
-        this.scheduleOnce(() => {
-            for (ball of DataManager.instance.balls) {
-                if (ball.worldPositionY > DataManager.instance.heightOfGameOverLine) {
-                    director.emit(EventType.GAME_OVER);
-                }
-            }
-        }, 0.5);
-    }
 }
 
 

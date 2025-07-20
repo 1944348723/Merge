@@ -29,6 +29,13 @@ export class DataManager extends Component {
             console.log(this._balls);
         }
     }
+
+    clearBalls() {
+        for (const ball of this._balls) {
+            ball.destroy();
+        }
+        this._balls.clear();
+    }
    
     get balls() {
         return this._balls;

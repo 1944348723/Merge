@@ -52,7 +52,6 @@ export class BallManager extends Component {
     onBeginContact(selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null) {
         if (!this.hasCollided && selfCollider.node.worldPositionY !== DataManager.instance.getDefaultBallY()) {
             this._hasCollided = true;
-            DataManager.instance.addBall(selfCollider.node);
             director.emit(EventType.BALL_FIRST_COLLISION, selfCollider.node);
         }
 

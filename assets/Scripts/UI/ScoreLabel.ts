@@ -7,10 +7,12 @@ export class ScoreLabel extends Component {
     private label: Label | null = null;
 
     protected onLoad(): void {
+        director.on(EventType.GAME_START, this.onGameStart, this);
         director.on(EventType.SCORE_CHANGED, this.updateScore, this);
     }
 
     protected onDestroy(): void {
+        director.off(EventType.GAME_START, this.onGameStart, this);
         director.off(EventType.SCORE_CHANGED, this.updateScore, this);
     }
 
@@ -27,6 +29,10 @@ export class ScoreLabel extends Component {
         if (this.label) {
             this.label.string = `分数：${score}`;
         }
+    }
+
+    onGameStart() {
+        this.updateScore(0);
     }
 }
 
