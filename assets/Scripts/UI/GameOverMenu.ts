@@ -7,6 +7,9 @@ const { ccclass, property } = _decorator;
 export class GameOverMenu extends Component {
     @property({type: Node})
     scoreLabel: Node | null = null;
+
+    @property({type: Node})
+    highScoreLabel: Node | null = null;
     
     @property({type: Node})
     maskSprite: Node | null = null; // 遮罩Sprite节点
@@ -18,12 +21,14 @@ export class GameOverMenu extends Component {
         this.node.active = false;
         director.on(EventType.GAME_START, this.onGameStart, this);
         director.on(EventType.GAME_OVER, this.onGameOver, this);
+        director.on(EventType.HIGH_SCORE_CHANGED, this.onHighScoreChanged, this);
         this.playAgainButton?.on(Input.EventType.TOUCH_END, this.onPlayAgainButtonClicked, this);
     }
 
     protected onDestroy(): void {
         director.off(EventType.GAME_START, this.onGameStart, this);
         director.off(EventType.GAME_OVER, this.onGameOver, this);
+        director.off(EventType.HIGH_SCORE_CHANGED, this.onHighScoreChanged, this);
         this.playAgainButton?.off(Input.EventType.TOUCH_END, this.onPlayAgainButtonClicked, this);
     }
 
@@ -37,12 +42,18 @@ export class GameOverMenu extends Component {
         if (this.maskSprite) {
             this.maskSprite.active = true;
         }
-        this.scoreLabel.getComponent(Label).string += DataManager.instance.score.toString();
+        this.scoreLabel.getComponent(Label).string = '本局分数: ' + DataManager.instance.score.toString();
+        this.highScoreLabel.getComponent(Label).string = '最高分数: ' + DataManager.instance.getHighScore().toString();
         this.node.active = true;
     }
 
     onPlayAgainButtonClicked() {
         director.emit(EventType.GAME_START);
         this.node.active = false;
+    }
+
+    onHighScoreChanged(score: number) {
+        this.highScoreLabel.getComponent(Label).string = '最高分数: ' + score.toString();
+        console.log('on high score changed', score);
     }
 }

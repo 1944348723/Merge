@@ -64,7 +64,7 @@ export class BallManager extends Component {
 
         // 优先判断y坐标，下面的merge上面的
         if (selfCollider.node.y < otherCollider.node.y) {
-            // this.merge(otherCollider.node);
+            this.merge(otherCollider.node);
         } else if (selfCollider.node.y === otherCollider.node.y) {
             // y坐标相同判断速度，速度慢的merge速度快的
             const otherBallManager = otherCollider.getComponent(BallManager);
@@ -72,7 +72,7 @@ export class BallManager extends Component {
             const otherVelocity = otherBallManager.getLinearVelocityScalar();
 
             if (selfVelocity < otherVelocity) {
-                // this.merge(otherCollider.node);
+                this.merge(otherCollider.node);
             }
         }
     }

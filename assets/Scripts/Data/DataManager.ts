@@ -1,4 +1,5 @@
-import { _decorator, Component, Node } from 'cc';
+import { _decorator, Component, director, Node } from 'cc';
+import { EventType } from './EventType';
 const { ccclass, property } = _decorator;
 
 @ccclass('DataManager')
@@ -47,6 +48,26 @@ export class DataManager extends Component {
 
     setDefaultBallY(worldPositionY: number) {
         this._defaultBallY = worldPositionY;
+    }
+
+    updateHighScore(): boolean {
+        const highScore = this.getHighScore();
+        console.log('[DataManager] updateHighScore', this.score, highScore);
+        if (this.score > highScore) {
+            localStorage.setItem('highScore', this.score.toString());
+            console.log('high score changed');
+            director.emit(EventType.HIGH_SCORE_CHANGED, this.score);
+            return true;
+        }
+        return false;
+    }
+
+    getHighScore(): number {
+        const highScore = localStorage.getItem('highScore');
+        if (highScore) {
+            return parseInt(highScore);
+        }
+        return 0;
     }
 }
 

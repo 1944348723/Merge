@@ -64,14 +64,16 @@ export class Game extends Component {
             }
         }
         if (count > 3) {
+            console.log('game over');
             director.emit(EventType.GAME_OVER);
         }
     }
 
     onGameStart() {
         this.gameOver = false;
-        // 清除所有球
         DataManager.instance.clearBalls();
+        DataManager.instance.score = 0;
+        this.score = 0;
 
         // 生成第一个球
         const ball = this.ballGenerator.generateRandomBall(this.defaultBallX, this.defaultBallY);
@@ -86,6 +88,7 @@ export class Game extends Component {
 
     onGameOver() {
         this.gameOver = true;
+        DataManager.instance.updateHighScore();
     }
 
     onSettingsPanelOpened() {
