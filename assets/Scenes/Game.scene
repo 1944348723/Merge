@@ -2685,7 +2685,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "BackToMenuButton",
+    "_name": "HomeButton",
     "_objFlags": 0,
     "__editorExtras__": {},
     "_parent": {
@@ -2739,7 +2739,7 @@
       "y": 0,
       "z": 0
     },
-    "_id": "1d4W6O7Z9A1rmdICdfl8uJ"
+    "_id": "e2uC48z3lAsZy6zQwmSYbx"
   },
   {
     "__type__": "cc.Node",
@@ -2787,7 +2787,7 @@
       "y": 0,
       "z": 0
     },
-    "_id": "04K5nPwydAwZIpXjEL4ZWO"
+    "_id": "91uRs/G5VG5op/NWgx/S05"
   },
   {
     "__type__": "cc.UITransform",
@@ -2809,7 +2809,7 @@
       "x": 0.5,
       "y": 0.5
     },
-    "_id": "03Pt5pm2JFEoeUQOZZtWB6"
+    "_id": "8e3P57eZ5LUIN84GF+EoFR"
   },
   {
     "__type__": "cc.Label",
@@ -2871,7 +2871,7 @@
       "y": 2
     },
     "_shadowBlur": 2,
-    "_id": "a7Xv2ijcJEWZAVyCVUgCvZ"
+    "_id": "1akKl5FEtIC51+Q3DT42sY"
   },
   {
     "__type__": "cc.UITransform",
@@ -2893,7 +2893,7 @@
       "x": 0.5,
       "y": 0.5
     },
-    "_id": "4fsLHCDH5LWq06ouX63OjV"
+    "_id": "4ddkqkk/dEw5V6umY4Vw7m"
   },
   {
     "__type__": "cc.Sprite",
@@ -2932,7 +2932,7 @@
     "_isTrimmedMode": true,
     "_useGrayscale": false,
     "_atlas": null,
-    "_id": "6blgHt6dhIa5GMJ2jMawpU"
+    "_id": "af3/aaEAZEcZiESWdA/fQ7"
   },
   {
     "__type__": "cc.Button",
@@ -2996,7 +2996,7 @@
     "_target": {
       "__id__": 72
     },
-    "_id": "10p6uarY1PTK735COu2WW2"
+    "_id": "aft12aYnZKBJ4VUY32fN6G"
   },
   {
     "__type__": "cc.Widget",
@@ -3026,7 +3026,7 @@
     "_originalHeight": 0,
     "_alignMode": 2,
     "_lockFlags": 0,
-    "_id": "57lixtZwxLia6raKdvDVfU"
+    "_id": "71hm47vQ1A8YHFrqK5wy8/"
   },
   {
     "__type__": "cc.Node",
@@ -4123,6 +4123,9 @@
     "restartButton": {
       "__id__": 64
     },
+    "homeButton": {
+      "__id__": 72
+    },
     "_id": "b64XnMt/xP4qmakr5fMlJL"
   },
   {
@@ -4830,7 +4833,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "BackToMenuButton",
+    "_name": "HomeButton",
     "_objFlags": 0,
     "__editorExtras__": {},
     "_parent": {
@@ -5546,6 +5549,9 @@
     },
     "playAgainButton": {
       "__id__": 118
+    },
+    "homeButton": {
+      "__id__": 126
     },
     "_id": "38h0TKRdZCD6DfOHCBZXHQ"
   },

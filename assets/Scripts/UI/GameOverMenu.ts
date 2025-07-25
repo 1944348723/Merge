@@ -17,19 +17,22 @@ export class GameOverMenu extends Component {
     @property({type: Node})
     playAgainButton: Node | null = null;
 
+    @property({type: Node})
+    homeButton: Node | null = null;
+
     protected onLoad(): void {
         this.node.active = false;
         director.on(EventType.GAME_START, this.onGameStart, this);
         director.on(EventType.GAME_OVER, this.onGameOver, this);
         director.on(EventType.HIGH_SCORE_CHANGED, this.onHighScoreChanged, this);
-        this.playAgainButton?.on(Input.EventType.TOUCH_END, this.onPlayAgainButtonClicked, this);
+        this.playAgainButton.on(Input.EventType.TOUCH_END, this.onPlayAgainButtonClicked, this);
+        this.homeButton.on(Input.EventType.TOUCH_END, this.onHomeButtonClicked, this);
     }
 
     protected onDestroy(): void {
         director.off(EventType.GAME_START, this.onGameStart, this);
         director.off(EventType.GAME_OVER, this.onGameOver, this);
         director.off(EventType.HIGH_SCORE_CHANGED, this.onHighScoreChanged, this);
-        this.playAgainButton?.off(Input.EventType.TOUCH_END, this.onPlayAgainButtonClicked, this);
     }
 
     onGameStart() {
@@ -50,6 +53,10 @@ export class GameOverMenu extends Component {
     onPlayAgainButtonClicked() {
         director.emit(EventType.GAME_START);
         this.node.active = false;
+    }
+
+    onHomeButtonClicked() {
+        director.loadScene('Home');
     }
 
     onHighScoreChanged(score: number) {

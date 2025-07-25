@@ -1,9 +1,9 @@
 import { _decorator, Component, director, UITransform, view, Node} from 'cc';
 import { EventType } from '../Data/EventType';
-import { BallGenerator } from './BallGenerator';
-import { Controller } from './Controller';
+import { BallGenerator } from '../GamePlay/BallGenerator';
+import { Controller } from '../GamePlay/Controller';
 import { BallType } from '../Data/BallType';
-import { BallManager } from './BallManager';
+import { BallManager } from '../GamePlay/BallManager';
 import { BallConfig } from '../Data/BallConfig';
 import { DataManager } from '../Data/DataManager';
 const { ccclass, property } = _decorator;
