@@ -1,8 +1,9 @@
 import { _decorator, BoxCollider2D, CircleCollider2D, Collider2D, Component, Contact2DType, director, IPhysics2DContact, Node, RigidBody2D, Vec2 } from 'cc';
 import { BallType } from '../Data/BallType';
-import { calculateDirection } from '../../Utils';
+import { calculateDirection } from '../Utils';
 import { EventType } from '../Data/EventType';
 import { DataManager } from '../Data/DataManager';
+import { AudioMgr } from '../Audio/AudioMgr';
 const { ccclass, property } = _decorator;
 
 @ccclass('BallManager')
@@ -53,6 +54,7 @@ export class BallManager extends Component {
     onBeginContact(selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null) {
         if (!this.hasCollided && selfCollider.node.worldPositionY !== DataManager.instance.getDefaultBallY()) {
             this._hasCollided = true;
+            AudioMgr.inst.playBallFirstCollision();
             director.emit(EventType.BALL_FIRST_COLLISION, selfCollider.node);
         }
 

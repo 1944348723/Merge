@@ -1,6 +1,7 @@
 import { _decorator, Component, director, Input, Label, Node } from 'cc';
 import { EventType } from '../Data/EventType';
 import { DataManager } from '../Data/DataManager';
+import { AudioMgr } from '../Audio/AudioMgr';
 const { ccclass, property } = _decorator;
 
 @ccclass('GameOverMenu')
@@ -51,11 +52,13 @@ export class GameOverMenu extends Component {
     }
 
     onPlayAgainButtonClicked() {
-        director.emit(EventType.GAME_START);
+        AudioMgr.inst.playOneShot('Audio/ButtonClicked');
         this.node.active = false;
+        director.emit(EventType.GAME_START);
     }
 
     onHomeButtonClicked() {
+        AudioMgr.inst.playOneShot('Audio/ButtonClicked');
         director.loadScene('Home');
     }
 

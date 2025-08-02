@@ -6,6 +6,7 @@ import { BallType } from '../Data/BallType';
 import { BallManager } from '../GamePlay/BallManager';
 import { BallConfig } from '../Data/BallConfig';
 import { DataManager } from '../Data/DataManager';
+import { AudioMgr } from '../Audio/AudioMgr';
 const { ccclass, property } = _decorator;
 
 @ccclass('Game')
@@ -107,10 +108,15 @@ export class Game extends Component {
     }
 
     onBallMerged(x: number, y: number, type: BallType) {
+        // 分数
         this.score += BallConfig.getScore(type);
         DataManager.instance.score = this.score;
         director.emit(EventType.SCORE_CHANGED, this.score);
-        
+
+        // 音效
+        AudioMgr.inst.playBallMerge();
+
+        // 生成新球
         const newBall = this.ballGenerator.generateBall(x, y, type + 1);
         newBall.getComponent(BallManager)?.drop();
     }

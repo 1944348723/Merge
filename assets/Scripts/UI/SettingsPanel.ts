@@ -1,5 +1,6 @@
 import { _decorator, Component, director, Input, Node } from 'cc';
 import { EventType } from '../Data/EventType';
+import { AudioMgr } from '../Audio/AudioMgr';
 const { ccclass, property } = _decorator;
 
 @ccclass('SettingsPanel')
@@ -25,22 +26,26 @@ export class SettingsPanel extends Component {
     }
 
     onSettingsButtonClicked() {
+        AudioMgr.inst.playOneShot('Audio/ButtonClicked');
         this.node.parent.setSiblingIndex(1000);
         this.node.active = true;
         director.emit(EventType.SETTINGS_PANEL_OPENED);
     }
 
     onCloseButtonClicked() {
+        AudioMgr.inst.playOneShot('Audio/ButtonClicked');
         this.node.active = false;
         director.emit(EventType.SETTINGS_PANEL_CLOSED);
     }
 
     onRestartButtonClicked() {
-        director.emit(EventType.GAME_START);
+        AudioMgr.inst.playOneShot('Audio/ButtonClicked');
         this.node.active = false;
+        director.emit(EventType.GAME_START);
     }
 
     onHomeButtonClicked() {
+        AudioMgr.inst.playOneShot('Audio/ButtonClicked');
         director.loadScene('Home');
     }
 }
