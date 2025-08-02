@@ -12,9 +12,17 @@ export class AudioMgr {
 
     private _BGM_AudioSource: AudioSource;   // 背景音乐
     private _SFX_AudioSourcePool: AudioSource[] = [];   // 音效 AudioSource 池
-
     // 音效池大小
-    private readonly SFX_POOL_SIZE = 8;
+    private readonly SFX_POOL_SIZE = 4;
+
+    private _enableBGM: boolean = true;
+    private _enableSFX: boolean = true;
+
+    // 音频文件路径
+    private _BGM_PATH = 'Audio/BGM';
+    private _BUTTON_CLICKED_PATH = 'Audio/ButtonClicked';
+    private _BALL_MERGE_PATH = 'Audio/BallMerge';
+    private _BALLS_HIT_PATH = 'Audio/BallsHit';
 
     constructor() {
         // 创建持久化节点
@@ -24,12 +32,36 @@ export class AudioMgr {
         director.addPersistRootNode(audioMgrNode);
 
         this._BGM_AudioSource = audioMgrNode.addComponent(AudioSource);
+        // 防止切换场景时，已经暂停的BGM被自动播放
+        this._BGM_AudioSource.playOnAwake = false;
         
         // 创建音效AudioSource池
         for (let i = 0; i < this.SFX_POOL_SIZE; i++) {
             const sfxAudioSource = audioMgrNode.addComponent(AudioSource);
             this._SFX_AudioSourcePool.push(sfxAudioSource);
         }
+    }
+
+    get enableBGM(): boolean {
+        return this._enableBGM;
+    }
+
+    set enableBGM(value: boolean) {
+        this._enableBGM = value;
+        
+        if (!value) {
+            this.pauseBGM();
+        } else {
+            this.resumeBGM();
+        }
+    }
+
+    get enableSFX(): boolean {
+        return this._enableSFX;
+    }
+
+    set enableSFX(value: boolean) {
+        this._enableSFX = value;
     }
 
     public getBGM_AudioSource() {
@@ -48,7 +80,6 @@ export class AudioMgr {
             }
         }
         
-        // 如果都在播放，返回第一个（会覆盖正在播放的音效）
         console.warn('所有音效 AudioSource 都在播放，无空闲音效AudioSource');
         return null;
     }
@@ -59,6 +90,10 @@ export class AudioMgr {
      * @param volume 音量
      */
     playOneShot(sound: AudioClip | string, volume: number = 1.0) {
+        if (!this.enableSFX) {
+            return;
+        }
+
         const audioSource = this.getAvailableSFXAudioSource();
         
         if (!audioSource) {
@@ -85,6 +120,10 @@ export class AudioMgr {
      * @param volume 音量
      */
     play(sound: AudioClip | string, volume: number = 1.0) {
+        if (!this.enableBGM) {
+            return;
+        }
+
         if (sound instanceof AudioClip) {
             // 直接播放 AudioClip
             this._BGM_AudioSource.stop();
@@ -127,16 +166,19 @@ export class AudioMgr {
     }
 
     // ========== 便捷播放方法 ==========
+    playBGM() {
+        this.play(this._BGM_PATH);
+    }
     
     playButtonClick() {
-        this.playOneShot('Audio/ButtonClicked');
+        this.playOneShot(this._BUTTON_CLICKED_PATH);
     }
 
     playBallMerge() {
-        this.playOneShot('Audio/BallMerge');
+        this.playOneShot(this._BALL_MERGE_PATH);
     }
 
     playBallFirstCollision() {
-        this.playOneShot('Audio/BallsHit');
+        this.playOneShot(this._BALLS_HIT_PATH);
     }
 }

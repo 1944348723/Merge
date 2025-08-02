@@ -26,26 +26,26 @@ export class SettingsPanel extends Component {
     }
 
     onSettingsButtonClicked() {
-        AudioMgr.inst.playOneShot('Audio/ButtonClicked');
+        AudioMgr.inst.playButtonClick();
         this.node.parent.setSiblingIndex(1000);
         this.node.active = true;
         director.emit(EventType.SETTINGS_PANEL_OPENED);
     }
 
     onCloseButtonClicked() {
-        AudioMgr.inst.playOneShot('Audio/ButtonClicked');
+        AudioMgr.inst.playButtonClick();
         this.node.active = false;
         director.emit(EventType.SETTINGS_PANEL_CLOSED);
     }
 
     onRestartButtonClicked() {
-        AudioMgr.inst.playOneShot('Audio/ButtonClicked');
+        AudioMgr.inst.playButtonClick();
         this.node.active = false;
         director.emit(EventType.GAME_START);
     }
 
     onHomeButtonClicked() {
-        AudioMgr.inst.playOneShot('Audio/ButtonClicked');
+        AudioMgr.inst.playButtonClick();
         director.loadScene('Home');
     }
 }

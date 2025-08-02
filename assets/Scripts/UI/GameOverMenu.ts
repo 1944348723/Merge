@@ -52,13 +52,13 @@ export class GameOverMenu extends Component {
     }
 
     onPlayAgainButtonClicked() {
-        AudioMgr.inst.playOneShot('Audio/ButtonClicked');
+        AudioMgr.inst.playButtonClick();
         this.node.active = false;
         director.emit(EventType.GAME_START);
     }
 
     onHomeButtonClicked() {
-        AudioMgr.inst.playOneShot('Audio/ButtonClicked');
+        AudioMgr.inst.playButtonClick();
         director.loadScene('Home');
     }
 
