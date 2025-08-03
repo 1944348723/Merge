@@ -1,6 +1,6 @@
 import { Node, AudioSource, AudioClip, resources, director } from 'cc';
 
-// TODO: 1.音量控制 2. 预加载
+// TODO: 预加载
 export class AudioMgr {
     private static _inst: AudioMgr;
     public static get inst(): AudioMgr {
@@ -17,6 +17,9 @@ export class AudioMgr {
 
     private _enableBGM: boolean = true;
     private _enableSFX: boolean = true;
+
+    private _BGM_VOLUME = 0.5;
+    private _SFX_VOLUME = 0.5;
 
     // 音频文件路径
     private _BGM_PATH = 'Audio/BGM';
@@ -64,6 +67,21 @@ export class AudioMgr {
         this._enableSFX = value;
     }
 
+    get BGM_VOLUME(): number {
+        return this._BGM_VOLUME;
+    }
+    set BGM_VOLUME(value: number) {
+        this._BGM_VOLUME = value;
+        this._BGM_AudioSource.volume = value;
+    }
+
+    get SFX_VOLUME(): number {
+        return this._SFX_VOLUME;
+    }
+    set SFX_VOLUME(value: number) {
+        this._SFX_VOLUME = value;
+    }
+
     public getBGM_AudioSource() {
         return this._BGM_AudioSource;
     }
@@ -89,7 +107,7 @@ export class AudioMgr {
      * @param sound 音频文件路径或 AudioClip
      * @param volume 音量
      */
-    playOneShot(sound: AudioClip | string, volume: number = 1.0) {
+    playOneShot(sound: AudioClip | string, volume: number = this.SFX_VOLUME) {
         if (!this.enableSFX) {
             return;
         }
@@ -119,7 +137,7 @@ export class AudioMgr {
      * @param sound 音频文件路径或 AudioClip
      * @param volume 音量
      */
-    play(sound: AudioClip | string, volume: number = 1.0) {
+    play(sound: AudioClip | string, volume: number = this.BGM_VOLUME) {
         if (!this.enableBGM) {
             return;
         }
