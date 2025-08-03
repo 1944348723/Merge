@@ -1,4 +1,4 @@
-import { _decorator, Component, director, Input, Label, Node } from 'cc';
+import { _decorator, Button, Component, director, Input, Label, Node } from 'cc';
 import { EventType } from '../Data/EventType';
 import { DataManager } from '../Data/DataManager';
 import { AudioMgr } from '../Audio/AudioMgr';
@@ -34,6 +34,16 @@ export class GameOverMenu extends Component {
         director.off(EventType.GAME_START, this.onGameStart, this);
         director.off(EventType.GAME_OVER, this.onGameOver, this);
         director.off(EventType.HIGH_SCORE_CHANGED, this.onHighScoreChanged, this);
+    }
+
+    // 重置按钮状态，否则重新打开设置面板时，按钮状态会保持上一次的点击状态
+    protected onEnable(): void {
+        const buttons = [this.playAgainButton, this.homeButton];
+        buttons.forEach(button => {
+            const buttonComponent = button.getComponent(Button);
+            buttonComponent.interactable = false;
+            buttonComponent.interactable = true;
+        });
     }
 
     onGameStart() {

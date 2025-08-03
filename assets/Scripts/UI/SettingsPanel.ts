@@ -1,4 +1,4 @@
-import { _decorator, Component, director, Input, Node, Slider, Toggle } from 'cc';
+import { _decorator, Button, Component, director, Input, Node, Slider, Toggle } from 'cc';
 import { EventType } from '../Data/EventType';
 import { AudioMgr } from '../Audio/AudioMgr';
 const { ccclass, property } = _decorator;
@@ -46,6 +46,16 @@ export class SettingsPanel extends Component {
         this.sfxToggle.isChecked = AudioMgr.inst.enableSFX;
         this.bgmSlider.progress = AudioMgr.inst.BGM_VOLUME;
         this.sfxSlider.progress = AudioMgr.inst.SFX_VOLUME;
+    }
+
+    protected onEnable(): void {
+        // 重置按钮状态，否则重新打开设置面板时，按钮状态会保持上一次的点击状态
+        const buttons = [this.closeButton, this.restartButton, this.homeButton];
+        buttons.forEach(button => {
+            const buttonComponent = button.getComponent(Button);
+            buttonComponent.interactable = false;
+            buttonComponent.interactable = true;
+        });
     }
 
     onSettingsButtonClicked() {
