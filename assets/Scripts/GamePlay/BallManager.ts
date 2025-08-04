@@ -6,6 +6,7 @@ import { DataManager } from '../Data/DataManager';
 import { AudioMgr } from '../Audio/AudioMgr';
 const { ccclass, property } = _decorator;
 
+// TODO: 使用状态机重构
 @ccclass('BallManager')
 export class BallManager extends Component {
     private type: BallType = null;

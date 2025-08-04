@@ -27,7 +27,7 @@ export class ScoreLabel extends Component {
     updateScore(score: number) {
         console.log(`score changed: ${score}`);
         if (this.label) {
-            this.label.string = `分数：${score}`;
+            this.label.string = `得分：${score}`;
         }
     }
 
