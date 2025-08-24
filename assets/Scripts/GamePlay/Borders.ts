@@ -59,7 +59,6 @@ export class Borders extends Component {
         if (ratio > this.alarmThreshold) {
             this.top.active = true;
         }
-        console.log(topOfBall, bottomOfPlayArea, this.top.worldPositionY, ratio);
     }
 }
 

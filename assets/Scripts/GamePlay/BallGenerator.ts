@@ -12,11 +12,17 @@ export class BallGenerator extends Component {
     public generateRandomBall(x:number, y:number) {
         const type:BallType = Math.floor(Math.random() * this.ballPrefabs.length);
         const ball = this.generateBall(x, y, type);
-        DataManager.instance.addBall(ball);
+        if (ball) {
+            DataManager.instance.addBall(ball);
+        }
         return ball;
     }
 
+    // TODO: 1.生成时从小变大   2.粒子特效   3.音效
     public generateBall(x:number, y:number, type: BallType): Node {
+        if (!this.ballPrefabs[type]) {
+            return null;
+        }
         const ball = instantiate(this.ballPrefabs[type]);
         ball.getComponent(BallManager).init(type);
         ball.getComponent(CircleCollider2D).enabled = false;

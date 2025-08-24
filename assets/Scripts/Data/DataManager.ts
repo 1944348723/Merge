@@ -7,6 +7,8 @@ export class DataManager extends Component {
     private static _instance: DataManager | null = null;
     private _balls: Set<Node> = new Set();
     private _defaultBallY = 0;
+    private _leftBound: number = null;
+    private _rightBound: number = null;
     public heightOfGameOverLine = 0;
     public score = 0;
 
@@ -68,6 +70,19 @@ export class DataManager extends Component {
             return parseInt(highScore);
         }
         return 0;
+    }
+
+    getLeftBound(): number {
+        return this._leftBound;
+    }
+
+    getRightBound(): number {
+        return this._rightBound;
+    }
+
+    setBounds(left: number, right: number) {
+        this._leftBound = left;
+        this._rightBound = right;
     }
 }
 

@@ -62,13 +62,11 @@ export class SettingsPanel extends Component {
         AudioMgr.inst.playButtonClick();
         this.node.parent.setSiblingIndex(1000);
         this.node.active = true;
-        director.emit(EventType.SETTINGS_PANEL_OPENED);
     }
 
     onCloseButtonClicked() {
         AudioMgr.inst.playButtonClick();
         this.node.active = false;
-        director.emit(EventType.SETTINGS_PANEL_CLOSED);
     }
 
     onRestartButtonClicked() {
