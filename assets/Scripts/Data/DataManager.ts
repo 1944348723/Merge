@@ -10,7 +10,8 @@ export class DataManager extends Component {
     private _leftBound: number = null;
     private _rightBound: number = null;
     public heightOfGameOverLine = 0;
-    public score = 0;
+
+    private _score = 0;
 
     public static get instance(): DataManager {
         if (!DataManager._instance) {
@@ -54,11 +55,11 @@ export class DataManager extends Component {
 
     updateHighScore(): boolean {
         const highScore = this.getHighScore();
-        console.log('[DataManager] updateHighScore', this.score, highScore);
-        if (this.score > highScore) {
-            localStorage.setItem('highScore', this.score.toString());
+        console.log('[DataManager] updateHighScore', this._score, highScore);
+        if (this._score > highScore) {
+            localStorage.setItem('highScore', this._score.toString());
             console.log('high score changed');
-            director.emit(EventType.HIGH_SCORE_CHANGED, this.score);
+            director.emit(EventType.HIGH_SCORE_CHANGED, this._score);
             return true;
         }
         return false;
@@ -70,6 +71,15 @@ export class DataManager extends Component {
             return parseInt(highScore);
         }
         return 0;
+    }
+
+    get score() {
+        return this._score;
+    }
+
+    set score(value: number) {
+        this._score = value;
+        director.emit(EventType.SCORE_CHANGED, this._score);
     }
 
     getLeftBound(): number {
@@ -84,6 +94,7 @@ export class DataManager extends Component {
         this._leftBound = left;
         this._rightBound = right;
     }
+
 }
 
 

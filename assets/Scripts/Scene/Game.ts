@@ -16,7 +16,6 @@ export class Game extends Component {
 
     private defaultBallX: number = 0; 
     private defaultBallY: number = 0;
-    private score: number = 0;
     private gameOver: boolean = false;
 
     // 初始化游戏
@@ -68,7 +67,6 @@ export class Game extends Component {
         this.gameOver = false;
         DataManager.instance.clearBalls();
         DataManager.instance.score = 0;
-        this.score = 0;
 
         // 生成第一个球
         this.ballGenerator.generateRandomBall(this.defaultBallX, this.defaultBallY);
@@ -86,13 +84,10 @@ export class Game extends Component {
     }
 
     onBallMerged(x: number, y: number, type: BallType) {
-        // 分数
-        this.score += BallConfig.getScore(type);
-        DataManager.instance.score = this.score;
-        director.emit(EventType.SCORE_CHANGED, this.score);
-
         // 音效
         AudioMgr.inst.playBallMerge();
+        // 分数
+        DataManager.instance.score += BallConfig.getScore(type);
 
         // 生成新球
         const newBall = this.ballGenerator.generateBall(x, y, type + 1);
