@@ -13,6 +13,7 @@ export class StateNormal extends State {
 
     onEnter(): void {
         this._ball.enablePhysics();
+        this._ball.drop();
     }
 
     onBeginContact(selfCollider: Collider2D, otherCollider: Collider2D, contact: IPhysics2DContact | null): void {

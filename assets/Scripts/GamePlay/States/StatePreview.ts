@@ -31,8 +31,6 @@ export class StatePreview extends State {
 
     // 状态转移
     onTouchEnd(): void {
-        this._ball.enablePhysics();
-        this._ball.drop();
         this.switchToState('Normal');
         director.emit(EventType.PLAYER_DROPPED_BALL);
     }

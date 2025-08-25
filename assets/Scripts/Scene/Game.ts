@@ -92,8 +92,6 @@ export class Game extends Component {
         // 生成新球
         const newBall = this.ballGenerator.generateBall(x, y, type + 1);
         const ballManager = newBall.getComponent(BallManager);
-        ballManager?.enablePhysics();
-        ballManager?.drop();
         ballManager?.animator.switchState('Normal');
     }
 
