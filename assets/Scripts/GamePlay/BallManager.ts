@@ -1,5 +1,4 @@
 import { _decorator, CircleCollider2D, Collider2D, Component, Contact2DType, director, EventTouch, IPhysics2DContact, Node, RigidBody2D, Vec2 } from 'cc';
-import { BallType } from '../Data/BallType';
 import { Animator } from './Animator';
 import { StateNormal } from './States/StateNormal';
 import { StatePreview } from './States/StatePreview';
@@ -9,11 +8,11 @@ const { ccclass, property } = _decorator;
 
 @ccclass('BallManager')
 export class BallManager extends Component {
-    private _type: BallType = null;
+    private _type: number = null;
     private _animator: Animator = null;
     private _hasCollided: boolean = false;
 
-    init(type: BallType) {
+    init(type: number) {
         this._type = type;
         this._animator = new Animator();
         if (this._animator) {

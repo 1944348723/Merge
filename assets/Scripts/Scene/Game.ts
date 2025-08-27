@@ -1,14 +1,11 @@
-import { _decorator, Component, director, UITransform, view, Node} from 'cc';
+import { _decorator, Component, director, UITransform, view, Node, CircleCollider2D, Collider, PhysicsSystem2D, EPhysics2DDrawFlags, RigidBody2D, ERigidBody2DType, Sprite, resources, SpriteFrame} from 'cc';
 import { EventType } from '../Data/EventType';
-import { BallGenerator } from '../GamePlay/BallGenerator';
-import { BallType } from '../Data/BallType';
+import { ballConfig, BallGenerator } from '../GamePlay/BallGenerator';
 import { BallManager } from '../GamePlay/BallManager';
-import { BallConfig } from '../Data/BallConfig';
 import { DataManager } from '../Data/DataManager';
 import { AudioMgr } from '../Audio/AudioMgr';
 const { ccclass, property } = _decorator;
 
-// TODO: 分数没必要Game里有一个，DataManager里有一个
 @ccclass('Game')
 export class Game extends Component {
     @property(BallGenerator)
@@ -20,6 +17,13 @@ export class Game extends Component {
 
     // 初始化游戏
     protected start(): void {
+        // 调试碰撞体
+        PhysicsSystem2D.instance.debugDrawFlags = EPhysics2DDrawFlags.Aabb |
+        EPhysics2DDrawFlags.Pair |
+        EPhysics2DDrawFlags.CenterOfMass |
+        EPhysics2DDrawFlags.Joint |
+        EPhysics2DDrawFlags.Shape;
+
         // 设置默认球的位置
         this.defaultBallX = this.node.worldPositionX
         this.defaultBallY = this.node.worldPositionY + view.getVisibleSize().height * 3 / 8;
@@ -69,7 +73,8 @@ export class Game extends Component {
         DataManager.instance.score = 0;
 
         // 生成第一个球
-        this.ballGenerator.generateRandomBall(this.defaultBallX, this.defaultBallY);
+        const ball = this.ballGenerator.generateRandomBall();
+        ball.setWorldPosition(this.defaultBallX, this.defaultBallY, 0);
     }
 
     onGameOver() {
@@ -79,18 +84,20 @@ export class Game extends Component {
 
     onPlayerDroppedBall() {
         this.scheduleOnce(() => {
-            const ball = this.ballGenerator.generateRandomBall(this.defaultBallX, this.defaultBallY);
+            const ball = this.ballGenerator.generateRandomBall();
+            ball.setWorldPosition(this.defaultBallX, this.defaultBallY, 0);
         }, 1);
     }
 
-    onBallMerged(x: number, y: number, type: BallType) {
+    onBallMerged(x: number, y: number, type: number) {
         // 音效
         AudioMgr.inst.playBallMerge();
         // 分数
-        DataManager.instance.score += BallConfig.getScore(type);
+        DataManager.instance.score += ballConfig[type].score;
 
         // 生成新球
-        const newBall = this.ballGenerator.generateBall(x, y, type + 1);
+        const newBall = this.ballGenerator.generateBall(type + 1);
+        newBall.setWorldPosition(x, y, 0);
         const ballManager = newBall.getComponent(BallManager);
         ballManager?.animator.switchState('Normal');
     }

@@ -314,8 +314,8 @@
     "_color": {
       "__type__": "cc.Color",
       "r": 255,
-      "g": 255,
-      "b": 255,
+      "g": 241,
+      "b": 189,
       "a": 255
     },
     "_spriteFrame": {
@@ -1390,36 +1390,9 @@
     },
     "_enabled": true,
     "__prefab": null,
-    "ballPrefabs": [
-      {
-        "__uuid__": "498acede-1463-47ba-af83-365338251716",
-        "__expectedType__": "cc.Prefab"
-      },
-      {
-        "__uuid__": "5d920c0d-25e3-4e04-9ad5-4cf82213e0c7",
-        "__expectedType__": "cc.Prefab"
-      },
-      {
-        "__uuid__": "8a4d9af4-cb2b-4e2c-9fed-08a5c83c5698",
-        "__expectedType__": "cc.Prefab"
-      },
-      {
-        "__uuid__": "845ccb4e-f249-42ac-ba15-e437c62c8331",
-        "__expectedType__": "cc.Prefab"
-      },
-      {
-        "__uuid__": "7df619c5-9775-4eb5-ba7f-0836ec181f14",
-        "__expectedType__": "cc.Prefab"
-      },
-      {
-        "__uuid__": "e9f36de2-f0eb-4569-b7b6-479ae9b15ceb",
-        "__expectedType__": "cc.Prefab"
-      },
-      {
-        "__uuid__": "931d7e1a-fa98-4398-b25f-c9c2add4b388",
-        "__expectedType__": "cc.Prefab"
-      }
-    ],
+    "ballContainer": {
+      "__id__": 9
+    },
     "_id": "d4hzkZV5RI94KCihj3aXvg"
   },
   {
@@ -6753,7 +6726,7 @@
     "ballGenerator": {
       "__id__": 38
     },
-    "_id": "b6lBFRyvdMFp+kQpgSmQI8"
+    "_id": "51LIl43elAdK+zzqjz42gM"
   },
   {
     "__type__": "cc.PrefabInfo",
