@@ -1,4 +1,4 @@
-import { _decorator, CircleCollider2D, Collider2D, Component, Contact2DType, director, EventTouch, IPhysics2DContact, Node, RigidBody2D, Vec2 } from 'cc';
+import { _decorator, CircleCollider2D, Collider2D, Component, Contact2DType, director, EventTouch, IPhysics2DContact, Node, RigidBody2D, tween, Vec2, Vec3 } from 'cc';
 import { Animator } from './Animator';
 import { StateNormal } from './States/StateNormal';
 import { StatePreview } from './States/StatePreview';
@@ -117,6 +117,16 @@ export class BallManager extends Component {
             let rigidBodyCenter = rigidBody.getWorldCenter(new Vec2());
             rigidBody.applyLinearImpulse(downwardImpulse, rigidBodyCenter, true);
         }
+    }
+
+    playSpawnAnimation(): void {
+        this.node.setScale(0, 0, 1);
+        
+        tween(this.node)
+            .to(0.2, { scale: new Vec3(1, 1, 1) }, {
+                easing: 'linear'
+            })
+            .start();
     }
 }
 

@@ -75,6 +75,7 @@ export class Game extends Component {
         // 生成第一个球
         const ball = this.ballGenerator.generateRandomBall();
         ball.setWorldPosition(this.defaultBallX, this.defaultBallY, 0);
+        ball.getComponent(BallManager)?.playSpawnAnimation();
     }
 
     onGameOver() {
@@ -86,6 +87,7 @@ export class Game extends Component {
         this.scheduleOnce(() => {
             const ball = this.ballGenerator.generateRandomBall();
             ball.setWorldPosition(this.defaultBallX, this.defaultBallY, 0);
+            ball.getComponent(BallManager)?.playSpawnAnimation();
         }, 1);
     }
 
@@ -98,6 +100,7 @@ export class Game extends Component {
         // 生成新球
         const newBall = this.ballGenerator.generateBall(type + 1);
         newBall.setWorldPosition(x, y, 0);
+        newBall.getComponent(BallManager)?.playSpawnAnimation();
         const ballManager = newBall.getComponent(BallManager);
         ballManager?.animator.switchState('Normal');
     }
