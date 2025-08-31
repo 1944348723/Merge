@@ -1,15 +1,18 @@
-import { _decorator, Component, director, UITransform, view, Node, CircleCollider2D, Collider, PhysicsSystem2D, EPhysics2DDrawFlags, RigidBody2D, ERigidBody2DType, Sprite, resources, SpriteFrame} from 'cc';
+import { _decorator, Component, director, UITransform, view, Node, CircleCollider2D, Collider, PhysicsSystem2D, EPhysics2DDrawFlags, RigidBody2D, ERigidBody2DType, Sprite, resources, SpriteFrame, Vec3} from 'cc';
 import { EventType } from '../Data/EventType';
-import { ballConfig, BallGenerator } from '../GamePlay/BallGenerator';
+import { BallGenerator } from '../GamePlay/BallGenerator';
 import { BallManager } from '../GamePlay/BallManager';
 import { DataManager } from '../Data/DataManager';
 import { AudioMgr } from '../Audio/AudioMgr';
+import { MergeEffect } from '../GamePlay/MergeEffect';
 const { ccclass, property } = _decorator;
 
 @ccclass('Game')
 export class Game extends Component {
     @property(BallGenerator)
     ballGenerator: BallGenerator | null = null;
+    @property(MergeEffect)
+    mergeEffect: MergeEffect | null = null;
 
     private defaultBallX: number = 0; 
     private defaultBallY: number = 0;
@@ -18,11 +21,11 @@ export class Game extends Component {
     // 初始化游戏
     protected start(): void {
         // 调试碰撞体
-        PhysicsSystem2D.instance.debugDrawFlags = EPhysics2DDrawFlags.Aabb |
-        EPhysics2DDrawFlags.Pair |
-        EPhysics2DDrawFlags.CenterOfMass |
-        EPhysics2DDrawFlags.Joint |
-        EPhysics2DDrawFlags.Shape;
+        // PhysicsSystem2D.instance.debugDrawFlags = EPhysics2DDrawFlags.Aabb |
+        // EPhysics2DDrawFlags.Pair |
+        // EPhysics2DDrawFlags.CenterOfMass |
+        // EPhysics2DDrawFlags.Joint |
+        // EPhysics2DDrawFlags.Shape;
 
         // 设置默认球的位置
         this.defaultBallX = this.node.worldPositionX
@@ -91,11 +94,14 @@ export class Game extends Component {
         }, 1);
     }
 
-    onBallMerged(x: number, y: number, type: number) {
+    onBallMerged(x: number, y: number, type: number, ballWidth: number) {
         // 音效
         AudioMgr.inst.playBallMerge();
+        // 特效
+        this.mergeEffect.play(type, new Vec3(x, y, 0), ballWidth);
+
         // 分数
-        DataManager.instance.score += ballConfig[type].score;
+        DataManager.instance.score += this.ballGenerator.ballConfig[type].score;
 
         // 生成新球
         const newBall = this.ballGenerator.generateBall(type + 1);
