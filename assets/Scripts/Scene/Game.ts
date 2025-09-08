@@ -1,4 +1,4 @@
-import { _decorator, Component, director, UITransform, view, Node, CircleCollider2D, Collider, PhysicsSystem2D, EPhysics2DDrawFlags, RigidBody2D, ERigidBody2DType, Sprite, resources, SpriteFrame, Vec3} from 'cc';
+import { _decorator, Component, director, UITransform, view, Node, Vec3} from 'cc';
 import { EventType } from '../Data/EventType';
 import { BallGenerator } from '../GamePlay/BallGenerator';
 import { BallManager } from '../GamePlay/BallManager';
@@ -7,6 +7,7 @@ import { AudioMgr } from '../Audio/AudioMgr';
 import { MergeEffect } from '../GamePlay/MergeEffect';
 const { ccclass, property } = _decorator;
 
+// TODO: 存档功能
 @ccclass('Game')
 export class Game extends Component {
     @property(BallGenerator)
