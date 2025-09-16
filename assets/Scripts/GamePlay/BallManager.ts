@@ -38,8 +38,8 @@ export class BallManager extends Component {
         if (collider) {
             collider.off(Contact2DType.BEGIN_CONTACT, this.onBeginContact, this);
         }
-        this.node.off(Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
-        this.node.off(Node.EventType.TOUCH_END, this.onTouchEnd, this);
+        this.node.parent.off(Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
+        this.node.parent.off(Node.EventType.TOUCH_END, this.onTouchEnd, this);
     }
 
     protected update(dt: number): void {

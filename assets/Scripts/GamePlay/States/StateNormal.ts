@@ -20,6 +20,7 @@ export class StateNormal extends State {
         this.emitIfFirstCollision(selfCollider.node);
 
         if (!this.canMerge(otherCollider.node)) {
+            console.info('cannot merge');
             return;
         }
 
@@ -71,8 +72,8 @@ export class StateNormal extends State {
         const otherBallManager = otherCollider.getComponent(BallManager);
         if (!otherBallManager) return false;
         
-        const otherState = otherBallManager.animator.getCurrentState();
-        return otherState && otherState.constructor.name === 'StateNormal';
+        const otherStateName = otherBallManager.animator.getCurrentStateName();
+        return otherStateName === 'Normal';
     }
 
     private emitIfFirstCollision(selfNode: Node): void {
@@ -80,6 +81,7 @@ export class StateNormal extends State {
             this._ball.hasCollided = true;
             AudioMgr.inst.playBallFirstCollision();
             director.emit(EventType.BALL_FIRST_COLLISION, selfNode);
+            console.info('first collision');
         }
     }
 }

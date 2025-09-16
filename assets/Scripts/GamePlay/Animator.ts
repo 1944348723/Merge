@@ -60,6 +60,15 @@ export class Animator {
         return this._state;
     }
 
+    getCurrentStateName(): string {
+        for (const [key, state] of this._states) {
+            if (state === this._state) {
+                return key;
+            }
+        }
+        return '';
+    }
+
     getStates() {
         return this._states;
     }
