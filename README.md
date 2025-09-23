@@ -231,3 +231,23 @@ class B extends Component {
 
 **缺点：**
 * 不支持可视化操作
+
+### 尝试自己实现对象池时碰到的问题(主要与Node有关)
+### 生命周期函数的调用顺序(本项目因为这个，出现了先访问对象池再创建的问题)
+### 分辨率适配
+
+
+### 状态管理
+* **Preview**: RigidBody2D-disabled, CircleCollider-disabled
+* **Normal**: RigidBody2D-enabled, CircleCollider-enabled
+* **Merging**: RigidBody2D-enabled, CircleCollider-enabled
+* **BeingMerged**: RigidBody2D-disabled, CircleCollider-disabled
+
+```mermaid
+graph
+    Preview --> Normal
+    Normal --> Merging
+    Normal --> BeingMerged
+    Merging --> Preview
+    BeingMerged --> Preview
+```

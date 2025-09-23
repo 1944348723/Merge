@@ -1,4 +1,4 @@
-import { _decorator, Node, Vec2, Vec3 } from 'cc';
+import { _decorator, Node, RigidBody2D, Vec2, Vec3 } from 'cc';
 import { DataManager } from '../../Data/DataManager';
 import State from './State';
 const { ccclass, property } = _decorator;
@@ -11,6 +11,14 @@ export class StateBeingMerged extends State {
 
     onEnter(): void {
         this._ball.disableCollider();
+        const rigidBody = this._ball.getComponent(RigidBody2D);
+        rigidBody.enabled = false;
+    }
+
+    onExit(): void {
+        const rigidBody = this._ball.getComponent(RigidBody2D);
+        rigidBody.linearVelocity = new Vec2(0, 0);
+        rigidBody.angularVelocity = 0;
     }
 
     onUpdate(deltaTime: number) {

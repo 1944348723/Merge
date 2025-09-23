@@ -1,22 +1,28 @@
-import { _decorator, Component, director, UITransform, view, Node, Vec3} from 'cc';
+import { _decorator, Component, director, UITransform, view, Node, Vec3, Vec2} from 'cc';
 import { EventType } from '../Data/EventType';
-import { BallGenerator } from '../GamePlay/BallGenerator';
-import { BallManager } from '../GamePlay/BallManager';
+import { BallPoolManager } from '../GamePlay/BallPoolManager';
 import { DataManager } from '../Data/DataManager';
 import { AudioMgr } from '../Audio/AudioMgr';
 import { MergeEffect } from '../GamePlay/MergeEffect';
+import { Controller } from '../GamePlay/Controller';
+import { BallManager } from '../GamePlay/BallManager';
 const { ccclass, property } = _decorator;
 
 // TODO: 存档功能
 @ccclass('Game')
 export class Game extends Component {
-    @property(BallGenerator)
-    ballGenerator: BallGenerator | null = null;
+    @property(BallPoolManager)
+    ballPoolManager: BallPoolManager | null = null;
+
     @property(MergeEffect)
     mergeEffect: MergeEffect | null = null;
 
-    private defaultBallX: number = 0; 
-    private defaultBallY: number = 0;
+    @property({type: Controller})
+    controller: Controller | null = null;
+
+    @property({type: Node})
+    ballContainer: Node | null = null;
+
     private gameOver: boolean = false;
 
     // 初始化游戏
@@ -28,27 +34,26 @@ export class Game extends Component {
         // EPhysics2DDrawFlags.Joint |
         // EPhysics2DDrawFlags.Shape;
 
-        // 设置默认球的位置
-        this.defaultBallX = this.node.worldPositionX
-        this.defaultBallY = this.node.worldPositionY + view.getVisibleSize().height * 3 / 8;
-        DataManager.instance.setDefaultBallY(this.defaultBallY);
         DataManager.instance.setBounds(0, view.getVisibleSize().width);
-
+        this.ballPoolManager.initPool();
         director.emit(EventType.GAME_START);
     }
 
     protected onLoad(): void {
-        director.on(EventType.PLAYER_DROPPED_BALL, this.onPlayerDroppedBall, this);
+        if (!this.ballContainer) {
+            this.ballContainer = this.node;
+        }
         director.on(EventType.BALL_MERGED, this.onBallMerged, this);
         director.on(EventType.GAME_START, this.onGameStart, this);
         director.on(EventType.GAME_OVER, this.onGameOver, this);
+        director.on(EventType.PLAYER_DROPPED_BALL, this.onPlayerDroppedBall, this);
     }
 
     protected onDestroy(): void {
-        director.off(EventType.PLAYER_DROPPED_BALL, this.onPlayerDroppedBall, this);
         director.off(EventType.BALL_MERGED, this.onBallMerged, this);
         director.off(EventType.GAME_START, this.onGameStart, this);
         director.off(EventType.GAME_OVER, this.onGameOver, this);
+        director.off(EventType.PLAYER_DROPPED_BALL, this.onPlayerDroppedBall, this);
     }
 
     protected update(dt: number): void {
@@ -72,46 +77,67 @@ export class Game extends Component {
     }
 
     onGameStart() {
+        console.info('game start');
         this.gameOver = false;
-        DataManager.instance.clearBalls();
         DataManager.instance.score = 0;
+        for (const ball of DataManager.instance.balls) {
+
+            this.ballPoolManager.returnBall(ball);
+        }
+        DataManager.instance.clearBalls();
 
         // 生成第一个球
-        const ball = this.ballGenerator.generateRandomBall();
-        ball.setWorldPosition(this.defaultBallX, this.defaultBallY, 0);
-        ball.getComponent(BallManager)?.playSpawnAnimation();
+        const firstBall = this.generateRandomBallAtDefaultPosition();
+        this.controller.setCurrentBall(firstBall);
     }
 
     onGameOver() {
         this.gameOver = true;
+        this.controller.setCurrentBall(null);
         DataManager.instance.updateHighScore();
     }
 
     onPlayerDroppedBall() {
+        console.info('onPlayerDroppedBall');
         this.scheduleOnce(() => {
-            const ball = this.ballGenerator.generateRandomBall();
-            ball.setWorldPosition(this.defaultBallX, this.defaultBallY, 0);
-            ball.getComponent(BallManager)?.playSpawnAnimation();
+            const ball = this.generateRandomBallAtDefaultPosition();
+            this.controller.setCurrentBall(ball);
         }, 1);
     }
 
-    onBallMerged(x: number, y: number, type: number, ballWidth: number) {
+    onBallMerged(mergePosition: Vec2, mergingBall: BallManager, targetBall: BallManager) {
+        const type = mergingBall.type;
+        const ballWidth = mergingBall.getComponent(UITransform).width;
         // 音效
         AudioMgr.inst.playBallMerge();
         // 特效
-        this.mergeEffect.play(type, new Vec3(x, y, 0), ballWidth);
+        this.mergeEffect.play(type, mergePosition.toVec3(), ballWidth);
 
         // 分数
-        DataManager.instance.score += this.ballGenerator.ballConfig[type].score;
+        DataManager.instance.score += this.ballPoolManager.ballConfig[type].score;
+
+        // 回收球
+        this.ballPoolManager.returnBall(mergingBall.node);
+        DataManager.instance.deleteBall(mergingBall.node);
+        this.ballPoolManager.returnBall(targetBall.node);
+        DataManager.instance.deleteBall(targetBall.node);
 
         // 生成新球
-        const newBall = this.ballGenerator.generateBall(type + 1);
-        newBall.setWorldPosition(x, y, 0);
+        const newBall = this.ballPoolManager.generateBall(type + 1);
+        newBall.setParent(this.ballContainer);
+        newBall.setWorldPosition(mergePosition.x, mergePosition.y, 0);
         newBall.getComponent(BallManager)?.playSpawnAnimation();
         const ballManager = newBall.getComponent(BallManager);
         ballManager?.animator.switchState('Normal');
     }
 
+    generateRandomBallAtDefaultPosition(): BallManager {
+        const ball = this.ballPoolManager.generateRandomBall();
+        ball.setParent(this.ballContainer);
+        ball.setWorldPosition(DataManager.instance.getDefaultSpawnPosition().x, DataManager.instance.getDefaultSpawnPosition().y, 0);
+        ball.getComponent(BallManager)?.playSpawnAnimation();
+        return ball.getComponent(BallManager);
+    }
 }
 
 

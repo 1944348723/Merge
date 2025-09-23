@@ -1,4 +1,4 @@
-import { _decorator, Collider2D, Component, director, IPhysics2DContact, Node } from 'cc';
+import { _decorator, Collider2D, Component, director, IPhysics2DContact, Node, RigidBody2D, RigidBodyComponent, Vec2 } from 'cc';
 import State from './State';
 import { DataManager } from '../../Data/DataManager';
 import { AudioMgr } from '../../Audio/AudioMgr';
@@ -20,7 +20,6 @@ export class StateNormal extends State {
         this.emitIfFirstCollision(selfCollider.node);
 
         if (!this.canMerge(otherCollider.node)) {
-            console.info('cannot merge');
             return;
         }
 
@@ -32,7 +31,6 @@ export class StateNormal extends State {
             const otherBallManager = otherCollider.getComponent(BallManager);
             const selfVelocity = this._ball.getLinearVelocityScalar();
             const otherVelocity = otherBallManager.getLinearVelocityScalar();
-
             if (selfVelocity <= otherVelocity) {
                 this.startMerge(otherCollider.node);
             }
@@ -77,7 +75,7 @@ export class StateNormal extends State {
     }
 
     private emitIfFirstCollision(selfNode: Node): void {
-        if (!this._ball.hasCollided && selfNode.worldPositionY !== DataManager.instance.getDefaultBallY()) {
+        if (!this._ball.hasCollided && selfNode.worldPositionY !== DataManager.instance.getDefaultSpawnPosition().y) {
             this._ball.hasCollided = true;
             AudioMgr.inst.playBallFirstCollision();
             director.emit(EventType.BALL_FIRST_COLLISION, selfNode);

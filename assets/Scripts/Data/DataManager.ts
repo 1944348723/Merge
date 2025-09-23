@@ -1,4 +1,4 @@
-import { _decorator, Component, director, Node } from 'cc';
+import { _decorator, Component, director, Node, Vec2 } from 'cc';
 import { EventType } from './EventType';
 const { ccclass, property } = _decorator;
 
@@ -6,12 +6,19 @@ const { ccclass, property } = _decorator;
 export class DataManager extends Component {
     private static _instance: DataManager | null = null;
     private _balls: Set<Node> = new Set();
-    private _defaultBallY = 0;
+    private _defaultSpawnPosition: Vec2 = new Vec2(0, 0);
     private _leftBound: number = null;
     private _rightBound: number = null;
+    private _score = 0;
+    private _ballContainer: Node = null;
     public heightOfGameOverLine = 0;
 
-    private _score = 0;
+    protected onLoad(): void {
+        // 将当前实例注册为单例实例
+        if (!DataManager._instance) {
+            DataManager._instance = this;
+        } 
+    }
 
     public static get instance(): DataManager {
         if (!DataManager._instance) {
@@ -35,9 +42,6 @@ export class DataManager extends Component {
     }
 
     clearBalls() {
-        for (const ball of this._balls) {
-            ball.destroy();
-        }
         this._balls.clear();
     }
    
@@ -45,12 +49,13 @@ export class DataManager extends Component {
         return this._balls;
     }
 
-    getDefaultBallY() {
-        return this._defaultBallY;
+    getDefaultSpawnPosition(): Vec2 {
+        return this._defaultSpawnPosition;
     }
 
-    setDefaultBallY(worldPositionY: number) {
-        this._defaultBallY = worldPositionY;
+    // 这里是直接使用传入的引用，可以考虑换成只赋值，避免外部修改
+    setDefaultSpawnPosition(spawnPosition: Vec2) {
+        this._defaultSpawnPosition = spawnPosition;
     }
 
     updateHighScore(): boolean {
@@ -93,6 +98,14 @@ export class DataManager extends Component {
     setBounds(left: number, right: number) {
         this._leftBound = left;
         this._rightBound = right;
+    }
+
+    get ballContainer() {
+        return this._ballContainer;
+    }
+
+    set ballContainer(value: Node) {
+        this._ballContainer = value;
     }
 
 }

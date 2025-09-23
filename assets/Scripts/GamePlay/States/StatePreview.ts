@@ -1,4 +1,4 @@
-import { _decorator, Component, director, EventTouch, Node, UITransform } from 'cc';
+import { _decorator, Component, director, EventTouch, Node, RigidBody2D, UITransform, Vec2 } from 'cc';
 import State from './State';
 import { DataManager } from '../../Data/DataManager';
 import { EventType } from '../../Data/EventType';
@@ -7,6 +7,10 @@ const { ccclass, property } = _decorator;
 @ccclass('StatePreview')
 export class StatePreview extends State {
     onEnter(): void {
+        const rigidBody = this._ball.getComponent(RigidBody2D);
+        rigidBody.linearVelocity = new Vec2(0, 0);
+        rigidBody.angularVelocity = 0;
+        rigidBody.enabled = false;
         this._ball.disableCollider();
     }
 

@@ -11,26 +11,12 @@ export class BallManager extends Component {
     private _type: number = null;
     private _animator: Animator = null;
     private _hasCollided: boolean = false;
-
-    init(type: number) {
-        this._type = type;
-        this._animator = new Animator();
-        if (this._animator) {
-            this._animator.addState('Preview', new StatePreview(this));
-            this._animator.addState('Normal', new StateNormal(this));
-            this._animator.addState('Merging', new StateMerging(this));
-            this._animator.addState('BeingMerged', new StateBeingMerged(this));
-        }
-        this._animator.switchState('Preview');
-    }
     
     protected onLoad(): void {
         const collider = this.getComponent(Collider2D);
         if (collider) {
             collider.on(Contact2DType.BEGIN_CONTACT, this.onBeginContact, this);
         }
-        this.node.parent.on(Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
-        this.node.parent.on(Node.EventType.TOUCH_END, this.onTouchEnd, this);
     }
 
     protected onDestroy(): void {
@@ -38,8 +24,30 @@ export class BallManager extends Component {
         if (collider) {
             collider.off(Contact2DType.BEGIN_CONTACT, this.onBeginContact, this);
         }
-        this.node.parent.off(Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
-        this.node.parent.off(Node.EventType.TOUCH_END, this.onTouchEnd, this);
+    }
+    
+    init(type: number) {
+        this._type = type;
+        this._hasCollided = false;
+        if (!this._animator) {
+            this._animator = new Animator();
+            this._animator.addState('Preview', new StatePreview(this));
+            this._animator.addState('Normal', new StateNormal(this));
+            this._animator.addState('Merging', new StateMerging(this));
+            this._animator.addState('BeingMerged', new StateBeingMerged(this));
+        }
+        if (this._animator.getCurrentStateName() !== 'Preview') {
+            this._animator.switchState('Preview');
+        }
+    }
+
+    unuse() {
+        this.node.active = false;
+    }
+
+    reuse() {
+        this.node.active = true;
+        this._animator.switchState('Preview');
     }
 
     protected update(dt: number): void {
@@ -83,12 +91,13 @@ export class BallManager extends Component {
     }
 
     getLinearVelocityScalar(): number {
-        const v: Vec2 = this.getComponent(RigidBody2D).linearVelocity.clone();
-        if (!v) {
+        const rigidBody = this.getComponent(RigidBody2D);
+        if (!rigidBody) {
             return 0;
         }
-
-        return Math.sqrt(v.x * v.x + v.y * v.y);
+        
+        const velocity = rigidBody.linearVelocity;
+        return Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
     }
     
     enablePhysics() {

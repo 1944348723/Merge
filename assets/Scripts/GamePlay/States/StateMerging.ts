@@ -1,7 +1,7 @@
-import { _decorator, Component, director, Node, UITransform } from 'cc';
+import { _decorator, Component, director, Node, RigidBody2D, Vec2 } from 'cc';
 import State from './State';
-import { DataManager } from '../../Data/DataManager';
 import { EventType } from '../../Data/EventType';
+import { BallManager } from '../BallManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('StateMerging')
@@ -9,22 +9,19 @@ export class StateMerging extends State {
     private _mergingTarget: Node;
     private readonly _MERGE_DISTASNCE: number = 30;
 
+    onExit(): void {
+        const rigidBody = this._ball.getComponent(RigidBody2D);
+        rigidBody.linearVelocity = new Vec2(0, 0);
+        rigidBody.angularVelocity = 0;
+    }
+
     onUpdate(deltaTime: number) {
         const myPos = this._ball.node.getPosition();
         const mergingTargetPos = this._mergingTarget.getPosition();
         const distance: number = mergingTargetPos.subtract(myPos).length();
         if (distance < this._MERGE_DISTASNCE) {
-            const ballType = this._ball.type;
-            const positionX = this._ball.node.worldPositionX;
-            const positionY = this._ball.node.worldPositionY;
-            
-            const ballWidth = this._ball.node.getComponent(UITransform).width;
-            
-            this._ball.node.destroy();
-            DataManager.instance.deleteBall(this._ball.node);
-            this._mergingTarget.destroy();
-            DataManager.instance.deleteBall(this._mergingTarget);
-            director.emit(EventType.BALL_MERGED, positionX, positionY, ballType, ballWidth);
+            const mergePosition = this._ball.node.worldPosition.toVec2();
+            director.emit(EventType.BALL_MERGED, mergePosition, this._ball, this._mergingTarget.getComponent(BallManager));
         }
     }
 
