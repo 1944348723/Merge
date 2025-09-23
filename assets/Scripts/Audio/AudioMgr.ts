@@ -147,6 +147,7 @@ export class AudioMgr {
             this._BGM_AudioSource.stop();
             this._BGM_AudioSource.clip = sound;
             this._BGM_AudioSource.volume = volume;
+            this._BGM_AudioSource.loop = true;
             this._BGM_AudioSource.play();
         } else {
             resources.load(sound, (err, clip: AudioClip) => {
@@ -156,6 +157,7 @@ export class AudioMgr {
                     this._BGM_AudioSource.stop();
                     this._BGM_AudioSource.clip = clip;
                     this._BGM_AudioSource.volume = volume;
+                    this._BGM_AudioSource.loop = true;
                     this._BGM_AudioSource.play();
                 }
             });
